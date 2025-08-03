@@ -42,7 +42,6 @@ body {
 body::-webkit-scrollbar {
     display: none;
 }
-
         /* 星空背景 */
         .stars-container {
             position: fixed;
@@ -130,16 +129,16 @@ body::-webkit-scrollbar {
             z-index: 1;
         }
        .container {
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 2rem;
-    position: relative;
-    z-index: 2;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
         header {
             text-align: center;
             margin-bottom: 4rem;
@@ -527,10 +526,16 @@ body::-webkit-scrollbar {
                 transform: translateX(100%);
             }
         }
-        .digital-clock {
+        .digital-clock-container { /* 新增容器，用于时钟和开关的布局 */
             position: absolute;
             top: 20px;
             right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 10;
+        }
+        .digital-clock {
             font-family: 'Courier New', monospace;
             font-size: 1rem;
             color: var(--neon-green);
@@ -543,16 +548,16 @@ body::-webkit-scrollbar {
             backdrop-filter: blur(5px);
         }
        footer {
-    margin-top: 6rem;
-    text-align: center;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 0.8rem;
-    letter-spacing: 1.5px;
-    position: relative;
-    z-index: 5;
-    padding: 2rem 0;
-    width: 100%;
-}
+            margin-top: 6rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+            letter-spacing: 1.5px;
+            position: relative;
+            z-index: 5;
+            padding: 2rem 0;
+            width: 100%;
+        }
         footer::before {
             content: '';
             position: absolute;
@@ -595,14 +600,77 @@ body::-webkit-scrollbar {
             .container {
                 padding: 1rem;
             }
-            .digital-clock {
+            .digital-clock-container { /* 响应式调整 */
                 position: relative;
                 top: auto;
                 right: auto;
+                flex-direction: column;
                 margin: 1rem auto;
-                display: inline-block;
+                display: flex;
             }
         }
+
+        .language-switch {
+            position: relative;
+            display: inline-block;
+            width: 70px; 
+            height: 34px;
+        }
+        .language-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            border: 1px solid var(--neon-blue);
+            transition: .4s;
+            border-radius: 34px;
+            backdrop-filter: blur(5px);
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 3px;
+            background-color: var(--neon-blue);
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+        .slider:after { 
+            position: absolute;
+            content: '中';
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neon-blue);
+            font-size: 14px;
+            transition: .4s;
+        }
+        input:checked + .slider {
+            border-color: var(--neon-green);
+        }
+        input:checked + .slider:before {
+            transform: translateX(36px);
+            background-color: var(--neon-green);
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+        input:checked + .slider:after {
+             content: 'EN';
+             left: 10px;
+             right: auto;
+             color: var(--neon-green);
+        }
+
     </style>
 </head>
 <body>
@@ -610,94 +678,136 @@ body::-webkit-scrollbar {
     <div class="noise"></div>
     <div class="code-lines"></div>
     <div class="circuit-lines">
-        <div class="circuit-line"></div>
-        <div class="circuit-line"></div>
-        <div class="circuit-line"></div>
-        <div class="circuit-line"></div>
-        <div class="circuit-line"></div>
-        <div class="circuit-line"></div>
-        <div class="circuit-line"></div>
+        <div class="circuit-line"></div> <div class="circuit-line"></div> <div class="circuit-line"></div> <div class="circuit-line"></div> <div class="circuit-line"></div> <div class="circuit-line"></div> <div class="circuit-line"></div>
     </div>
-    <!-- 星云效果 -->
     <div class="nebula" style="width: 600px; height: 600px; top: -100px; left: -100px; background: var(--nebula-color1);"></div>
     <div class="nebula" style="width: 500px; height: 500px; bottom: -100px; right: -100px; background: var(--nebula-color2); animation-delay: -15s;"></div>
     <div class="nebula" style="width: 400px; height: 400px; top: 50%; right: -150px; background: var(--nebula-color3); animation-delay: -7s;"></div>
-    
-    <!-- 行星轨道 -->
     <div class="orbit" style="width: 800px; height: 800px; top: 50%; left: 10%; transform: translate(-50%, -50%);">
         <div class="planet" style="width: 20px; height: 20px; background: var(--neon-blue); top: 0%; left: 50%; --glow-color: var(--neon-blue);"></div>
     </div>
     <div class="orbit" style="width: 400px; height: 400px; top: 20%; right: 10%; transform: translate(50%, -50%); animation-duration: 40s;">
         <div class="planet" style="width: 15px; height: 15px; background: var(--neon-pink); bottom: 0%; left: 50%; --glow-color: var(--neon-pink);"></div>
     </div>
-    
-    <div class="glitch">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
+    <div class="glitch"><span></span> <span></span> <span></span></div>
+
     <div class="container">
-        <div class="digital-clock" id="clock">00:00:00</div>
+        <!-- 修改：将时钟和切换器包裹在一个容器里，方便布局 -->
+        <div class="digital-clock-container">
+            <div class="digital-clock" id="clock">00:00:00</div>
+            <!-- ✨ 新增：语言切换开关HTML结构 -->
+            <label class="language-switch">
+                <input type="checkbox" id="language-toggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+        
         <header>
             <h1>Free AI</h1>
-            <p class="subtitle">探索未来 · 释放创造力</p>
+            <!-- 修改：添加 data-translate-key -->
+            <p class="subtitle" data-translate-key="subtitle">探索未来 · 释放创造力</p>
         </header>
+
         <div class="grid">
             <div class="card">
                 <div class="card-content">
                     <span class="card-icon">💬</span>
-                    <h2>AI智能对话</h2>
-                    <p>强大的AI聊天助手，可以回答问题、提供创意建议、编写文本，甚至帮你解决复杂问题。完全免费，无限制使用。</p>
-                    <a href="https://freeai.aihub.ren/chat" class="btn">开始对话</a>
+                    <!-- 修改：添加 data-translate-key -->
+                    <h2 data-translate-key="card1_title">AI智能对话</h2>
+                    <p data-translate-key="card1_desc">强大的AI聊天助手，可以回答问题、提供创意建议、编写文本，甚至帮你解决复杂问题。完全免费，无限制使用。</p>
+                    <a href="https://freeai.aihub.ren/chat" class="btn" data-translate-key="card1_btn">开始对话</a>
                 </div>
                 <div class="star-dust" id="dust-1"></div>
             </div>
             <div class="card">
                 <div class="card-content">
                     <span class="card-icon">🎨</span>
-                    <h2>AI图像生成</h2>
-                    <p>将你的想法转化为视觉艺术。只需输入文本描述，AI将为你创造令人惊叹的图像。支持多种风格和高分辨率导出。</p>
-                    <a href="https://freeai.aihub.ren/draw" class="btn">生成图像</a>
+                    <!-- 修改：添加 data-translate-key -->
+                    <h2 data-translate-key="card2_title">AI图像生成</h2>
+                    <p data-translate-key="card2_desc">将你的想法转化为视觉艺术。只需输入文本描述，AI将为你创造令人惊叹的图像。支持多种风格和高分辨率导出。</p>
+                    <a href="https://freeai.aihub.ren/draw" class="btn" data-translate-key="card2_btn">生成图像</a>
                 </div>
                 <div class="star-dust" id="dust-2"></div>
             </div>
             <div class="card">
                 <div class="card-content">
                     <span class="card-icon">🔊</span>
-                    <h2>AI语音合成</h2>
-                    <p>将文本转换为逼真的语音。支持多种语言和声音风格，适用于创作内容、教育材料或个人使用。</p>
-                    <a href="https://freeai.aihub.ren/tts" class="btn">转换语音</a>
+                    <!-- 修改：添加 data-translate-key -->
+                    <h2 data-translate-key="card3_title">AI语音合成</h2>
+                    <p data-translate-key="card3_desc">将文本转换为逼真的语音。支持多种语言和声音风格，适用于创作内容、教育材料或个人使用。</p>
+                    <a href="https://freeai.aihub.ren/tts" class="btn" data-translate-key="card3_btn">转换语音</a>
                 </div>
                 <div class="star-dust" id="dust-3"></div>
             </div>
         </div>
         <footer>
-            <p>© 2025 <a href="https://github.com/Azad-sl/FreeAI" target="_blank" style="text-decoration: none; color: inherit;"><i class="fab fa-github" style="color: var(--neon-blue);"></i>   Free AI</a> | 基于 Pollinations.AI | <a href="https://other.azad.asia" target="_blank" style="text-decoration: none; color: inherit;">Azad的实验室</a></p>
+            <!-- 修改：添加 data-translate-key -->
+            <p data-translate-key="footer_text">© 2025 <a href="https://github.com/Azad-sl/FreeAI" target="_blank" style="text-decoration: none; color: inherit;"><i class="fab fa-github" style="color: var(--neon-blue);"></i>   Free AI</a> | 基于 Pollinations.AI | <a href="https://other.azad.asia" target="_blank" style="text-decoration: none; color: inherit;">Azad的实验室</a></p>
         </footer>
     </div>
     <script>
+        // --- ✨ 新增：多语言文本数据仓库 ---
+        const translations = {
+            'zh-CN': {
+                title: 'FreeAI - 基于 Pollinations.AI',
+                subtitle: '探索未来 · 释放创造力',
+                card1_title: 'AI智能对话',
+                card1_desc: '强大的AI聊天助手，可以回答问题、提供创意建议、编写文本，甚至帮你解决复杂问题。完全免费，无限制使用。',
+                card1_btn: '开始对话',
+                card2_title: 'AI图像生成',
+                card2_desc: '将你的想法转化为视觉艺术。只需输入文本描述，AI将为你创造令人惊叹的图像。支持多种风格和高分辨率导出。',
+                card2_btn: '生成图像',
+                card3_title: 'AI语音合成',
+                card3_desc: '将文本转换为逼真的语音。支持多种语言和声音风格，适用于创作内容、教育材料或个人使用。',
+                card3_btn: '转换语音',
+                footer_text: '© 2025 <a href="https://github.com/Azad-sl/FreeAI" target="_blank" style="text-decoration: none; color: inherit;"><i class="fab fa-github" style="color: var(--neon-blue);"></i>   Free AI</a> | 基于 Pollinations.AI | <a href="https://other.azad.asia" target="_blank" style="text-decoration: none; color: inherit;">Azad的实验室</a>'
+            },
+            'en': {
+                title: 'FreeAI - Powered by Pollinations.AI',
+                subtitle: 'Explore The Future · Unleash Creativity',
+                card1_title: 'Intelligent AI Chat',
+                card1_desc: 'A powerful AI chat assistant that answers questions, provides creative suggestions, writes text, and even helps solve complex problems. Completely free, unlimited use.',
+                card1_btn: 'Start Chat',
+                card2_title: 'AI Image Generation',
+                card2_desc: 'Turn your ideas into visual art. Just enter a text description, and the AI will create stunning images for you. Supports various styles and high-resolution export.',
+                card2_btn: 'Generate Image',
+                card3_title: 'AI Voice Synthesis',
+                card3_desc: 'Convert text into realistic speech. Supports multiple languages and voice styles, suitable for content creation, educational materials, or personal use.',
+                card3_btn: 'Convert Voice',
+                footer_text: '© 2025 <a href="https://github.com/Azad-sl/FreeAI" target="_blank" style="text-decoration: none; color: inherit;"><i class="fab fa-github" style="color: var(--neon-blue);"></i>   Free AI</a> | Powered by Pollinations.AI | <a href="https://other.azad.asia" target="_blank" style="text-decoration: none; color: inherit;">Azad\'s Lab</a>'
+            }
+        };
+
+        // --- ✨ 新增：语言切换核心函数 ---
+        function switchLanguage(lang) {
+            document.documentElement.lang = lang;
+            document.title = translations[lang]['title'];
+            
+            document.querySelectorAll('[data-translate-key]').forEach(el => {
+                const key = el.dataset.translateKey;
+                if (translations[lang][key]) {
+                    // 使用innerHTML以支持footer中的链接
+                    el.innerHTML = translations[lang][key];
+                }
+            });
+            // 保存用户选择到本地
+            localStorage.setItem('userLanguage', lang);
+        }
+        
         // 创建星空背景
         function createStars() {
             const starsContainer = document.getElementById('stars-container');
             const starCount = window.innerWidth < 768 ? 100 : 200;
             
-            // 创建星星
             for (let i = 0; i < starCount; i++) {
                 const star = document.createElement('div');
                 star.classList.add('star');
-                
-                // 随机位置
                 const x = Math.random() * 100;
                 const y = Math.random() * 100;
-                
-                // 随机大小和亮度
                 const size = Math.random() * 2 + 1;
                 const opacity = Math.random() * 0.7 + 0.3;
-                
-                // 随机动画时间
                 const duration = Math.random() * 3 + 2;
                 const delay = Math.random() * 5;
-                
                 star.style.left = `${x}%`;
                 star.style.top = `${y}%`;
                 star.style.width = `${size}px`;
@@ -705,65 +815,49 @@ body::-webkit-scrollbar {
                 star.style.setProperty('--opacity', opacity);
                 star.style.setProperty('--duration', `${duration}s`);
                 star.style.setProperty('--delay', `${delay}s`);
-                
                 starsContainer.appendChild(star);
             }
             
-            // 创建流星
             for (let i = 0; i < 5; i++) {
                 const shootingStar = document.createElement('div');
                 shootingStar.classList.add('shooting-star');
-                
-                // 随机位置和角度
                 const y = Math.random() * 70;
                 const rotate = Math.random() * 20 - 10;
-                
-                // 随机动画时间
                 const duration = Math.random() * 10 + 15;
                 const delay = Math.random() * 15;
-                
                 shootingStar.style.top = `${y}%`;
                 shootingStar.style.right = `0`;
                 shootingStar.style.transform = `rotate(${rotate}deg)`;
                 shootingStar.style.setProperty('--duration', `${duration}s`);
                 shootingStar.style.setProperty('--delay', `${delay}s`);
-                
                 starsContainer.appendChild(shootingStar);
             }
         }
         
-        // 为卡片创建星尘效果
         function createStarDust(containerId, color) {
             const container = document.getElementById(containerId);
             const particleCount = 30;
-            
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.classList.add('dust-particle');
-                
-                // 随机位置
                 const x = Math.random() * 100;
                 const delay = Math.random() * 3;
                 const size = Math.random() * 2 + 1;
                 const opacity = Math.random() * 0.7 + 0.3;
-                
                 particle.style.left = `${x}%`;
                 particle.style.bottom = `-5px`;
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
                 particle.style.opacity = opacity;
                 particle.style.animationDelay = `${delay}s`;
-                
                 if (color) {
                     particle.style.background = color;
                     particle.style.boxShadow = `0 0 3px ${color}`;
                 }
-                
                 container.appendChild(particle);
             }
         }
         
-        // 更新数字时钟
         function updateClock() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
@@ -772,7 +866,6 @@ body::-webkit-scrollbar {
             document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
         }
         
-        // 添加动态电路效果
         function addCircuitEffects() {
             const lines = document.querySelectorAll('.circuit-line');
             lines.forEach(line => {
@@ -783,32 +876,25 @@ body::-webkit-scrollbar {
             });
         }
         
-        // 添加鼠标跟随效果
         function addMouseEffect() {
             document.addEventListener('mousemove', (e) => {
                 const mouseX = e.clientX / window.innerWidth;
                 const mouseY = e.clientY / window.innerHeight;
                 const cards = document.querySelectorAll('.card');
-                
                 cards.forEach(card => {
                     const rect = card.getBoundingClientRect();
                     const cardCenterX = rect.left + rect.width / 2;
                     const cardCenterY = rect.top + rect.height / 2;
                     const distanceX = (e.clientX - cardCenterX) / 30;
                     const distanceY = (e.clientY - cardCenterY) / 30;
-                    
-                    // 限制倾斜角度
                     const tiltX = Math.max(Math.min(distanceY, 5), -5);
                     const tiltY = Math.max(Math.min(-distanceX, 5), -5);
-                    
                     if (Math.abs(distanceX) < 100 && Math.abs(distanceY) < 100) {
                         card.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-5px)`;
                     } else {
                         card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
                     }
                 });
-                
-                // 行星跟随光标轻微移动
                 const planets = document.querySelectorAll('.planet');
                 planets.forEach(planet => {
                     const moveX = (mouseX - 0.5) * 10;
@@ -816,17 +902,14 @@ body::-webkit-scrollbar {
                     planet.style.marginLeft = `${moveX}px`;
                     planet.style.marginTop = `${moveY}px`;
                 });
-                
-                // 背景光效跟随
-document.body.style.backgroundImage = `
-    radial-gradient(circle at ${mouseX * 100}% ${mouseY * 100}%, rgba(1, 200, 238, 0.2) 0%, transparent 50%),
-    radial-gradient(circle at ${85 - mouseX * 30}% ${30 + mouseY * 40}%, rgba(174, 95, 248, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at ${15 + mouseX * 30}% ${70 - mouseY * 40}%, rgba(255, 42, 109, 0.1) 0%, transparent 40%)
-`;
+                document.body.style.backgroundImage = `
+                    radial-gradient(circle at ${mouseX * 100}% ${mouseY * 100}%, rgba(1, 200, 238, 0.2) 0%, transparent 50%),
+                    radial-gradient(circle at ${85 - mouseX * 30}% ${30 + mouseY * 40}%, rgba(174, 95, 248, 0.1) 0%, transparent 40%),
+                    radial-gradient(circle at ${15 + mouseX * 30}% ${70 - mouseY * 40}%, rgba(255, 42, 109, 0.1) 0%, transparent 40%)
+                `;
             });
         }
         
-        // 随机生成故障效果
         function randomGlitch() {
             const glitchElements = document.querySelectorAll('.glitch span');
             const randomIndex = Math.floor(Math.random() * glitchElements.length);
@@ -840,7 +923,6 @@ document.body.style.backgroundImage = `
             setTimeout(randomGlitch, 3000 + Math.random() * 5000);
         }
         
-        // 初始化
         document.addEventListener('DOMContentLoaded', () => {
             createStars();
             createStarDust('dust-1', '#01c8ee');
@@ -848,11 +930,31 @@ document.body.style.backgroundImage = `
             createStarDust('dust-3', '#ae5ff8');
             addCircuitEffects();
             addMouseEffect();
-            
             setInterval(updateClock, 1000);
             updateClock();
-            
             setTimeout(randomGlitch, 2000);
+
+            // --- ✨ 新增：语言切换初始化和事件监听 ---
+            const languageToggle = document.getElementById('language-toggle');
+            
+            // 1. 检查本地存储，决定初始语言
+            const savedLang = localStorage.getItem('userLanguage') || 'zh-CN';
+            
+            // 2. 设置页面初始状态
+            switchLanguage(savedLang);
+            if (savedLang === 'en') {
+                languageToggle.checked = true;
+            }
+
+            // 3. 监听开关点击事件
+            languageToggle.addEventListener('change', () => {
+                if (languageToggle.checked) {
+                    switchLanguage('en');
+                } else {
+                    switchLanguage('zh-CN');
+                }
+            });
+            // --- 初始化结束 ---
         });
     </script>
 </body>
