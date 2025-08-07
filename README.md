@@ -44,5 +44,5 @@ If you like this project, please give it a ⭐️ **Star**! Or, you can buy me a
 如果项目对你有帮助，欢迎点个 ⭐️ **Star**！也可以请我喝杯咖啡。
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/e9eecbdd-f266-467e-b615-71b67d8e8f17" alt="Donation" width="200" />
+  <img src="https://github.com/user-attachments/assets/e9eecbdd-f266-467e-b615-71b67d8e8f17" alt="Donation" width="400" />
 </p>
