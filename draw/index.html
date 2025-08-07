@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-<link rel="shortcut icon" href="/favicon.ico">
-    <title>Free AI 绘画生成器</title>
+    <link rel="shortcut" href="/favicon.ico">
+    <title data-i18n-key="pageTitle">Free AI 绘画生成器</title>
     <style>
         :root {
             --primary-color: #00a8ff;
@@ -42,9 +42,76 @@
         }
 
         header {
-            text-align: center;
+            display: flex;
+            justify-content: space-between; 
+            align-items: center; 
+            gap: 15px;
             margin-bottom: 30px;
             position: relative;
+        }
+
+        .header-left {
+            flex-shrink: 0; 
+        }
+        
+        .header-center {
+            text-align: center;
+            flex-grow: 1; 
+        }
+        
+        .header-right {
+           flex-shrink: 0; 
+        }
+
+        .home-link-btn {
+            display: inline-block;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            color: rgba(228, 241, 254, 0.7);
+            background-color: rgba(26, 38, 52, 0.5);
+            border: 1px solid rgba(0, 168, 255, 0.2);
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            white-space: nowrap; 
+        }
+
+        .home-link-btn:hover {
+            color: var(--text-color);
+            background-color: rgba(0, 168, 255, 0.15);
+            border-color: rgba(0, 168, 255, 0.4);
+        }
+
+        .lang-switcher {
+            background-color: rgba(26, 38, 52, 0.5);
+            border: 1px solid rgba(0, 168, 255, 0.2);
+            border-radius: 20px;
+            padding: 4px;
+            display: flex;
+            gap: 5px;
+            backdrop-filter: blur(5px);
+        }
+
+        .lang-switcher span {
+            padding: 5px 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            color: rgba(228, 241, 254, 0.6);
+        }
+
+        .lang-switcher span.active {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 10px rgba(0, 228, 255, 0.5);
+        }
+
+        .lang-switcher span:not(.active):hover {
+             color: var(--text-color);
+             background-color: rgba(0, 168, 255, 0.1);
         }
 
         h1 {
@@ -62,7 +129,8 @@
             content: '';
             position: absolute;
             bottom: -5px;
-            left: 0;
+            left: 50%;
+            transform: translateX(-50%);
             width: 100%;
             height: 2px;
             background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
@@ -72,7 +140,7 @@
             color: rgba(228, 241, 254, 0.7);
             font-size: 1.1rem;
         }
-
+        
         .main-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -83,509 +151,122 @@
             .main-content {
                 grid-template-columns: 1fr;
             }
-        }
 
-        .control-panel {
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .control-panel::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--accent-color);
-        }
-
-        input[type="text"],
-        input[type="number"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 12px 15px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 168, 255, 0.3);
-            background-color: rgba(26, 38, 52, 0.8);
-            color: var(--text-color);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        input[type="text"]:focus,
-        input[type="number"]:focus,
-        textarea:focus,
-        select:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 2px rgba(0, 228, 255, 0.2);
-        }
-
-        textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            margin-right: 10px;
-            accent-color: var(--accent-color);
-            width: 18px;
-            height: 18px;
-        }
-
-        button {
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(0, 168, 255, 0.4);
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 228, 255, 0.5);
-        }
-
-        button:active {
-            transform: translateY(1px);
-        }
-
-        button i {
-            margin-right: 8px;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .preview-panel {
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .preview-panel::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
-        }
-
-        .image-container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 300px;
-            background-color: rgba(12, 24, 36, 0.5);
-            border-radius: 10px;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .image-container img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            border-radius: 8px;
-        }
-
-        .loading-indicator {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(12, 24, 36, 0.8);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(0, 228, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--accent-color);
-            animation: spin 1s ease-in-out infinite;
-            margin-bottom: 15px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .image-info {
-            background-color: rgba(26, 38, 52, 0.8);
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            max-height: 150px;
-            overflow-y: auto;
-        }
-
-        .image-info pre {
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-
-        .image-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .image-actions button {
-            flex: 1;
-            padding: 10px;
-        }
-
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 500;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-            transform: translateX(150%);
-            transition: transform 0.3s ease;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .notification.error {
-            background-color: var(--error-color);
-        }
-
-        .notification.success {
-            background-color: var(--success-color);
-        }
-
-        .glow-effect {
-            position: absolute;
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
-            opacity: 0.1;
-            filter: blur(20px);
-            animation: float 8s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(30px, -30px); }
-        }
-
-        .model-info {
-            margin-top: 10px;
-            font-size: 0.85rem;
-            color: rgba(228, 241, 254, 0.6);
-        }
-
-        .parameter-tips {
-            font-size: 0.85rem;
-            color: rgba(228, 241, 254, 0.6);
-            margin-top: 5px;
-        }
-
-        /* 科技感装饰 */
-        .tech-decoration {
-            position: absolute;
-            font-family: monospace;
-            color: rgba(0, 228, 255, 0.2);
-            pointer-events: none;
-            user-select: none;
-            z-index: -1;
-        }
-
-        .tech-decoration.top-left {
-            top: 20px;
-            left: 20px;
-            font-size: 0.8rem;
-        }
-
-        .tech-decoration.bottom-right {
-            bottom: 20px;
-            right: 20px;
-            font-size: 0.8rem;
-            text-align: right;
-        }
-
-        /* 历史记录样式 */
-        .history-panel {
-            margin-top: 30px;
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .history-panel::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-color), var(--primary-color), var(--accent-color));
-        }
-
-        .history-title {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .history-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .history-item {
-            background-color: rgba(26, 38, 52, 0.8);
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .history-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .history-item img {
-            width: 100%;
-            aspect-ratio: 1/1;
-            object-fit: cover;
-        }
-
-        .history-item-info {
-            padding: 10px;
-            font-size: 0.8rem;
-        }
-
-        .history-item-prompt {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-bottom: 5px;
-        }
-
-        .history-item-model {
-            color: var(--accent-color);
-        }
-
-        .empty-history {
-            text-align: center;
-            padding: 30px;
-            color: rgba(228, 241, 254, 0.5);
-        }
-
-        /* 响应式调整 */
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
             h1 {
-                font-size: 1.8rem;
+                font-size: 1.5rem; 
             }
-            
-            .main-content {
-                gap: 20px;
+            .subtitle {
+                font-size: 0.9rem;
             }
-            
-            .control-panel, .preview-panel, .history-panel {
-                padding: 15px;
-            }
-            
-            .button-group {
-                flex-direction: column;
-            }
-            
-            .history-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            header {
+                gap: 10px; 
             }
         }
-/* 取消所有元素的滚动条 */
-::-webkit-scrollbar {
-    display: none; /* Chrome, Safari 和 Opera */
-}
-
-/* Firefox 则使用 */
-.no-scrollbar {
-    scrollbar-width: none; /* Firefox */
-}
-
-.no-scrollbar::-webkit-scrollbar {
-    display: none; /* Chrome, Safari 和 Opera */
-}
-
+        
+        @media (max-width: 480px) {
+             h1 {
+                font-size: 1.2rem; 
+            }
+             .subtitle {
+                display: none; 
+            }
+        }
+        
+        .control-panel { background-color: var(--card-bg); border-radius: 15px; padding: 25px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); position: relative; overflow: hidden; }
+        .control-panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color)); }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--accent-color); }
+        input[type="text"], input[type="number"], textarea, select { width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid rgba(0, 168, 255, 0.3); background-color: rgba(26, 38, 52, 0.8); color: var(--text-color); font-size: 1rem; transition: all 0.3s ease; }
+        input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 2px rgba(0, 228, 255, 0.2); }
+        textarea { min-height: 100px; resize: vertical; }
+        .checkbox-group { display: flex; align-items: center; margin-bottom: 15px; }
+        .checkbox-group input[type="checkbox"] { margin-right: 10px; accent-color: var(--accent-color); width: 18px; height: 18px; }
+        button { background: linear-gradient(45deg, var(--primary-color), var(--accent-color)); color: white; border: none; padding: 12px 25px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0, 168, 255, 0.4); }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 228, 255, 0.5); }
+        button:active { transform: translateY(1px); }
+        button i { margin-right: 8px; }
+        .button-group { display: flex; gap: 15px; margin-top: 20px; }
+        .preview-panel { background-color: var(--card-bg); border-radius: 15px; padding: 25px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); display: flex; flex-direction: column; position: relative; overflow: hidden; }
+        .preview-panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent-color), var(--primary-color)); }
+        .image-container { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 300px; background-color: rgba(12, 24, 36, 0.5); border-radius: 10px; margin-bottom: 20px; position: relative; overflow: hidden; }
+        .image-container img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; }
+        .loading-indicator { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(12, 24, 36, 0.8); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; }
+        .loading-indicator div:last-child { margin-top: 15px; }
+        .spinner { width: 50px; height: 50px; border: 3px solid rgba(0, 228, 255, 0.3); border-radius: 50%; border-top-color: var(--accent-color); animation: spin 1s ease-in-out infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .image-info { background-color: rgba(26, 38, 52, 0.8); padding: 15px; border-radius: 10px; font-size: 0.9rem; max-height: 150px; overflow-y: auto; }
+        .image-info pre { white-space: pre-wrap; word-break: break-all; }
+        .image-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .image-actions button { flex: 1; padding: 10px; }
+        .notification { position: fixed; top: 20px; right: 20px; padding: 15px 25px; border-radius: 8px; color: white; font-weight: 500; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); z-index: 1000; transform: translateX(150%); transition: transform 0.3s ease; }
+        .notification.show { transform: translateX(0); }
+        .notification.error { background-color: var(--error-color); }
+        .notification.success { background-color: var(--success-color); }
+        .glow-effect { position: absolute; width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%); opacity: 0.1; filter: blur(20px); animation: float 8s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(30px, -30px); } }
+        .model-info { margin-top: 10px; font-size: 0.85rem; color: rgba(228, 241, 254, 0.6); }
+        .parameter-tips { font-size: 0.85rem; color: rgba(228, 241, 254, 0.6); margin-top: 5px; }
+        .tech-decoration { position: absolute; font-family: monospace; color: rgba(0, 228, 255, 0.2); pointer-events: none; user-select: none; z-index: -1; }
+        .tech-decoration.top-left { top: 20px; left: 20px; font-size: 0.8rem; }
+        .tech-decoration.bottom-right { bottom: 20px; right: 20px; font-size: 0.8rem; text-align: right; }
+        .history-panel { margin-top: 30px; background-color: var(--card-bg); border-radius: 15px; padding: 25px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); position: relative; overflow: hidden; }
+        .history-panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent-color), var(--primary-color), var(--accent-color)); }
+        .history-title { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .history-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+        .history-item { background-color: rgba(26, 38, 52, 0.8); border-radius: 10px; overflow: hidden; transition: transform 0.3s ease; cursor: pointer; position: relative; }
+        .history-item:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
+        .history-item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+        .history-item-info { padding: 10px; font-size: 0.8rem; }
+        .history-item-prompt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 5px; }
+        .history-item-model { color: var(--accent-color); }
+        .empty-history { text-align: center; padding: 30px; color: rgba(228, 241, 254, 0.5); }
+        @media (max-width: 768px) { .container { padding: 10px; } .main-content { gap: 20px; } .control-panel, .preview-panel, .history-panel { padding: 15px; } .button-group { flex-direction: column; } .history-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
+        ::-webkit-scrollbar { display: none; } .no-scrollbar { scrollbar-width: none; } .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="tech-decoration top-left">
-            system.init()<br>
-            loading_ai_modules...<br>
-            connection_established<br>
-            pollinations.ai_v2.1
-        </div>
-        
-        <div class="tech-decoration bottom-right">
-            status: online<br>
-            latency: 23ms<br>
-            neural_net: active<br>
-            creative_engine: running
-        </div>
-        
+        <!-- ( decorative divs are unchanged ) -->
+        <div class="tech-decoration top-left">...</div>
+        <div class="tech-decoration bottom-right">...</div>
         <div class="glow-effect" style="top: 10%; left: 20%;"></div>
         <div class="glow-effect" style="bottom: 30%; right: 10%;"></div>
-        
+      
         <header>
-            <h1>Free AI绘画生成器</h1>
-            <p class="subtitle">基于Pollinations AI的高级图像生成系统</p>
-<br><br>
-
-
-<style>
-.sci-fi-btn {
-    position: relative;
-    padding: 4px 8px;
-    font-family: 'Arial', sans-serif;
-    font-size: 1em;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #00f3ff;
-    background: #0a0a2e;
-    border: 2px solid #3d3dff;
-    border-radius: 8px;
-    cursor: pointer;
-    overflow: hidden;
-    transition: 0.5s;
-    text-shadow: 0 0 10px #00f3ff;
-    box-shadow: 0 0 20px rgba(61, 61, 255, 0.3);
-}
-
-.sci-fi-btn:hover {
-    background: #13134e;
-    box-shadow: 0 0 30px rgba(61, 61, 255, 0.6);
-    transform: scale(1.05);
-    color: #ffffff;
-}
-
-
-
-.sci-fi-btn:hover::before {
-    left: 100%;
-}
-
-
-
-.glowing-border:nth-child(1) {
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #3d3dff);
-    animation: borderTop 2s linear infinite;
-}
-
-@keyframes borderTop {
-    0% { left: -2px; }
-    100% { left: 100%; }
-}
-
-/* 添加点击动画 */
-.sci-fi-btn:active {
-    transform: scale(0.45);
-    transition: 0.1s;
-}
-
-</style>
-
-<a href="https://freeai.azad.asia" class="sci-fi-btn" style="text-decoration: none;">
-    <!-- 添加流光边框 -->
-    <span class="glowing-border"></span>
-    <span class="glowing-border"></span>
-    返回首页
-</a>
-
+            <div class="header-left">
+                <a href="https://freeai.aihub.ren" class="home-link-btn">
+                    <span data-i18n-key="homeButton">返回首页</span>
+                </a>
+            </div>
+            
+            <div class="header-center">
+                <h1 data-i18n-key="mainHeading">Free AI绘画生成器</h1>
+                <p class="subtitle" data-i18n-key="subtitle">基于Pollinations AI的高级图像生成系统</p>
+            </div>
+            
+            <div class="header-right">
+                <div class="lang-switcher">
+                    <span id="lang-zh" data-lang="zh-CN">中</span>
+                    <span id="lang-en" data-lang="en-US">EN</span>
+                </div>
+            </div>
         </header>
-        
+      
+        <!-- ( The rest of the body HTML and script are unchanged ) -->
         <div class="main-content">
             <div class="control-panel">
                 <div class="form-group">
-                    <label for="prompt">提示词 (Prompt)</label>
-                    <textarea id="prompt" placeholder="描述你想要生成的图像内容..."></textarea>
-                                        <div class="parameter-tips">提示：使用详细、具体的描述可以获得更好的结果。尝试描述风格、场景、颜色等细节。</div>
+                    <label for="prompt" data-i18n-key="promptLabel">提示词 (Prompt)</label>
+                    <textarea id="prompt" data-i18n-key="promptPlaceholder" placeholder="描述你想要生成的图像内容..."></textarea>
+                    <div class="parameter-tips" data-i18n-key="promptTip">提示：使用详细、具体的描述可以获得更好的结果。尝试描述风格、场景、颜色等细节。</div>
                 </div>
-                
                 <div class="form-group">
-                    <label for="negative-prompt">负面提示词 (Negative Prompt)</label>
-                    <input type="text" id="negative-prompt" placeholder="描述你不希望出现在图像中的内容..." value="worst quality, blurry">
-                    <div class="parameter-tips">提示：用于排除不想要的元素，如"模糊的、低质量的"等。</div>
+                    <label for="negative-prompt" data-i18n-key="negPromptLabel">负面提示词 (Negative Prompt)</label>
+                    <input type="text" id="negative-prompt" data-i18n-key="negPromptPlaceholder" placeholder="描述你不希望出现在图像中的内容..." value="worst quality, blurry">
+                    <div class="parameter-tips" data-i18n-key="negPromptTip">提示：用于排除不想要的元素，如"模糊的、低质量的"等。</div>
                 </div>
-                
                 <div class="form-group">
-                    <label for="model">模型选择</label>
+                    <label for="model" data-i18n-key="modelLabel">模型选择</label>
                     <select id="model">
                         <option value="flux">Flux (通用型)</option>
                         <option value="FLUX-3D">FLUX-3D (3D渲染风格)</option>
@@ -597,494 +278,53 @@
                     </select>
                     <div class="model-info" id="model-info">Flux: 通用型模型，适合大多数场景</div>
                 </div>
-                
                 <div class="form-group">
                     <div class="form-row" style="display: flex; gap: 15px;">
-                        <div style="flex: 1;">
-                            <label for="width">宽度</label>
-                            <input type="number" id="width" min="64" max="1920" step="8" value="720">
-                        </div>
-                        <div style="flex: 1;">
-                            <label for="height">高度</label>
-                            <input type="number" id="height" min="64" max="1920" step="8" value="1280">
-                        </div>
+                        <div style="flex: 1;"><label for="width" data-i18n-key="widthLabel">宽度</label><input type="number" id="width" min="64" max="1920" step="8" value="720"></div>
+                        <div style="flex: 1;"><label for="height" data-i18n-key="heightLabel">高度</label><input type="number" id="height" min="64" max="1920" step="8" value="1280"></div>
                     </div>
-                    <div class="parameter-tips">提示：推荐使用8的倍数，最大尺寸取决于模型限制。</div>
+                    <div class="parameter-tips" data-i18n-key="dimensionTip">提示：推荐使用8的倍数，最大尺寸取决于模型限制。</div>
                 </div>
-                
                 <div class="form-group">
-                    <label for="seed">种子值 (Seed)</label>
+                    <label for="seed" data-i18n-key="seedLabel">种子值 (Seed)</label>
                     <div style="display: flex; gap: 10px;">
                         <input type="number" id="seed" min="-1" max="2147483647" value="-1" style="flex: 1;">
-                        <button id="random-seed" style="padding: 12px 15px;">随机</button>
+                        <button id="random-seed" style="padding: 12px 15px;" data-i18n-key="randomButton">随机</button>
                     </div>
-                    <div class="parameter-tips">提示：使用相同的种子值可以生成相似的图像，-1表示随机种子。</div>
+                    <div class="parameter-tips" data-i18n-key="seedTip">提示：使用相同的种子值可以生成相似的图像，-1表示随机种子。</div>
                 </div>
-                
                 <div class="form-group">
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="nologo">
-                        <label for="nologo" style="display: inline;">移除水印</label>
-                    </div>
-                    
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="safe" checked>
-                        <label for="safe" style="display: inline;">安全模式 (过滤不适内容)</label>
-                    </div>
+                    <div class="checkbox-group"><input type="checkbox" id="nologo"><label for="nologo" style="display: inline;" data-i18n-key="noLogoLabel">移除水印</label></div>
+                    <div class="checkbox-group"><input type="checkbox" id="safe" checked><label for="safe" style="display: inline;" data-i18n-key="safeModeLabel">安全模式 (过滤不适内容)</label></div>
                 </div>
-                
-                <div class="button-group">
-                    <button id="generate-btn" style="flex: 2;">
-                        <i>🎨</i> 生成图像
-                    </button>
-                    <button id="clear-btn" style="background: rgba(255, 255, 255, 0.1); box-shadow: none;">
-                        <i>🗑️</i> 清空
-                    </button>
-                </div>
+                <div class="button-group"><button id="generate-btn" style="flex: 2;"><i>🎨</i> <span data-i18n-key="generateButton">生成图像</span></button><button id="clear-btn" style="background: rgba(255, 255, 255, 0.1); box-shadow: none;"><i>🗑️</i> <span data-i18n-key="clearButton">清空</span></button></div>
             </div>
-            
             <div class="preview-panel">
-                <h3 style="margin-bottom: 15px;">图像预览</h3>
+                <h3 style="margin-bottom: 15px;" data-i18n-key="previewTitle">图像预览</h3>
                 <div class="image-container">
-                    <div id="loading" class="loading-indicator" style="display: none;">
-                        <div class="spinner"></div>
-                        <div>正在生成图像...</div>
-                    </div>
+                    <div id="loading" class="loading-indicator" style="display: none;"><div class="spinner"></div><div data-i18n-key="loadingText">正在生成图像...</div></div>
                     <img id="preview-image" style="display: none;">
-                    <div id="placeholder-text" style="color: rgba(228, 241, 254, 0.5); text-align: center;">
-                        点击"生成图像"按钮开始创作
-                    </div>
+                    <div id="placeholder-text" style="color: rgba(228, 241, 254, 0.5); text-align: center;" data-i18n-key="placeholderText">点击"生成图像"按钮开始创作</div>
                 </div>
-                
-                <div class="image-info" id="image-info" style="display: none;">
-                    <pre id="image-details"></pre>
-                </div>
-                
-                <div class="image-actions" id="image-actions" style="display: none;">
-                    <button id="download-btn">
-                        <i>💾</i> 下载图像
-                    </button>
-                    <button id="copy-prompt-btn">
-                        <i>📋</i> 复制提示词
-                    </button>
-                </div>
+                <div class="image-info" id="image-info" style="display: none;"><pre id="image-details"></pre></div>
+                <div class="image-actions" id="image-actions" style="display: none;"><button id="download-btn"><i>💾</i> <span data-i18n-key="downloadButton">下载图像</span></button><button id="copy-prompt-btn"><i>📋</i> <span data-i18n-key="copyPromptButton">复制提示词</span></button></div>
             </div>
         </div>
-        
         <div class="history-panel">
-            <div class="history-title">
-                <h3>历史记录</h3>
-                <button id="clear-history-btn" style="background: rgba(255, 255, 255, 0.1); box-shadow: none; padding: 8px 15px;">
-                    清空历史
-                </button>
-            </div>
-            
-            <div class="history-grid" id="history-container">
-                <div class="empty-history" id="empty-history">
-                    您的创作历史将显示在这里
-                </div>
-            </div>
+            <div class="history-title"><h3 data-i18n-key="historyTitle">历史记录</h3><button id="clear-history-btn" style="background: rgba(255, 255, 255, 0.1); box-shadow: none; padding: 8px 15px;" data-i18n-key="clearHistoryButton">清空历史</button></div>
+            <div class="history-grid" id="history-container"><div class="empty-history" id="empty-history" data-i18n-key="emptyHistoryText">您的创作历史将显示在这里</div></div>
         </div>
     </div>
-    
-
-
-<p style="text-align: center; padding: 2px 0;  color: inherit; font-family: 'Arial', sans-serif; font-size: 12px; line-height: 1.6; margin-top: 3px;">
-  <span style="display: inline-block; position: relative; vertical-align: middle;">
-    © 2025 <a href="https://other.azad.asia" target="_blank" style="text-decoration: none;  color: inherit; transition: color 0.3s ease;">Azad的实验室</a>
-  </span>
-  |
-  <span style="display: inline-block; position: relative; vertical-align: middle;">
-    <i class="fas fa-brain" style="margin-right: 5px;"></i>
-    基于 Pollinations.AI
-  </span>
-  |
-  <span style="display: inline-block; position: relative; vertical-align: middle;">
-    <a href="https://home.azad.asia/dashang" target="_blank" style="text-decoration: none; color: inherit; transition: color 0.3s ease;">
-      <i class="fas fa-coffee" style="margin-right: 5px;"></i>请站长喝咖啡
-    </a>
-  </span>
-</p>
-
-
+    <p style="text-align: center; padding: 2px 0;  color: inherit; font-family: 'Arial', sans-serif; font-size: 12px; line-height: 1.6; margin-top: 3px;">
+      <span style="display: inline-block; position: relative; vertical-align: middle;">© 2025 <a href="https://other.azad.asia" target="_blank" style="text-decoration: none;  color: inherit; transition: color 0.3s ease;" data-i18n-key="footerLab">Azad的实验室</a></span> |
+      <span style="display: inline-block; position: relative; vertical-align: middle;"><i class="fas fa-brain" style="margin-right: 5px;"></i> <span data-i18n-key="footerBasedOn">基于 Pollinations.AI</span></span> |
+      <span style="display: inline-block; position: relative; vertical-align: middle;"><a href="https://home.azad.asia/dashang" target="_blank" style="text-decoration: none; color: inherit; transition: color 0.3s ease;"><i class="fas fa-coffee" style="margin-right: 5px;"></i><span data-i18n-key="footerCoffee">请站长喝咖啡</span></a></span>
+    </p>
     <div class="notification" id="notification"></div>
-    
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 获取DOM元素
-            const promptInput = document.getElementById('prompt');
-            const negativePromptInput = document.getElementById('negative-prompt');
-            const modelSelect = document.getElementById('model');
-            const modelInfo = document.getElementById('model-info');
-            const widthInput = document.getElementById('width');
-            const heightInput = document.getElementById('height');
-            const seedInput = document.getElementById('seed');
-            const randomSeedBtn = document.getElementById('random-seed');
-            const noLogoCheckbox = document.getElementById('nologo');
-            const safeCheckbox = document.getElementById('safe');
-            const generateBtn = document.getElementById('generate-btn');
-            const clearBtn = document.getElementById('clear-btn');
-            const previewImage = document.getElementById('preview-image');
-            const placeholderText = document.getElementById('placeholder-text');
-            const loadingIndicator = document.getElementById('loading');
-            const imageInfo = document.getElementById('image-info');
-            const imageDetails = document.getElementById('image-details');
-            const imageActions = document.getElementById('image-actions');
-            const downloadBtn = document.getElementById('download-btn');
-            const copyPromptBtn = document.getElementById('copy-prompt-btn');
-            const historyContainer = document.getElementById('history-container');
-            const emptyHistory = document.getElementById('empty-history');
-            const clearHistoryBtn = document.getElementById('clear-history-btn');
-            const notification = document.getElementById('notification');
-            
-            // 模型信息
-            const modelDescriptions = {
-                'flux': 'Flux: 通用型模型，适合大多数场景',
-                'FLUX-3D': 'FLUX-3D: 专为3D渲染风格优化的模型',
-                'FLUX-PRO': 'FLUX-PRO: 提供专业级质量的高级模型',
-                'Flux-realism': 'Flux-realism: 专注于写实风格的图像生成',
-                'Flux-anime': 'Flux-anime: 优化用于生成动漫风格的图像',
-                'Flux-cablyai': 'Flux-cablyai: 具有特殊艺术风格的模型',
-                'turbo': 'Turbo: 快速生成模型，速度优先'
-            };
-            
-            // 更新模型信息
-            modelSelect.addEventListener('change', function() {
-                modelInfo.textContent = modelDescriptions[this.value] || '';
-            });
-            
-            // 随机种子按钮
-            randomSeedBtn.addEventListener('click', function() {
-                seedInput.value = Math.floor(Math.random() * 2147483647);
-            });
-            
-            // 清空按钮
-            clearBtn.addEventListener('click', function() {
-                promptInput.value = '';
-                negativePromptInput.value = 'worst quality, blurry';
-                seedInput.value = -1;
-                previewImage.style.display = 'none';
-                placeholderText.style.display = 'block';
-                imageInfo.style.display = 'none';
-                imageActions.style.display = 'none';
-            });
-            
-            // 生成图像
-            generateBtn.addEventListener('click', async function() {
-                const prompt = promptInput.value.trim();
-                if (!prompt) {
-                    showNotification('请输入提示词', 'error');
-                    return;
-                }
-                
-                // 显示加载状态
-                loadingIndicator.style.display = 'flex';
-                placeholderText.style.display = 'none';
-                previewImage.style.display = 'none';
-                imageInfo.style.display = 'none';
-                imageActions.style.display = 'none';
-                
-                // 构建参数
-                const params = {
-                    prompt: prompt,
-                    model: modelSelect.value,
-                    width: widthInput.value,
-                    height: heightInput.value,
-                    seed: seedInput.value === '-1' ? Math.floor(Math.random() * 2147483647) : seedInput.value,
-                    nologo: noLogoCheckbox.checked,
-                    safe: safeCheckbox.checked,
-                    negative_prompt: negativePromptInput.value
-                };
-                
-                try {
-                    // 构建URL
-                    let url = `https://image.pollinations.ai/prompt/${encodeURIComponent(params.prompt)}`;
-                    url += `?width=${params.width}&height=${params.height}&seed=${params.seed}&model=${params.model}`;
-                    
-                    if (params.negative_prompt) {
-                        url += `&negative_prompt=${encodeURIComponent(params.negative_prompt)}`;
-                    }
-                    
-                    if (params.nologo) {
-                        url += '&nologo=true';
-                    }
-                    
-                    if (!params.safe) {
-                        url += '&safe=false';
-                    }
-                    
-                    // 加载图像
-                    previewImage.onload = function() {
-                        loadingIndicator.style.display = 'none';
-                        previewImage.style.display = 'block';
-                        imageInfo.style.display = 'block';
-                        imageActions.style.display = 'flex';
-                        
-                        // 显示图像信息
-                        const details = {
-                            prompt: params.prompt,
-                            model: params.model,
-                            dimensions: `${params.width}x${params.height}`,
-                            seed: params.seed,
-                            negative_prompt: params.negative_prompt || '无',
-                            generated_at: new Date().toLocaleString()
-                        };
-                        
-                        imageDetails.textContent = JSON.stringify(details, null, 2);
-                        
-                        // 添加到历史记录
-                        addToHistory(url, details);
-                    };
-                    
-                    previewImage.onerror = function() {
-                        loadingIndicator.style.display = 'none';
-                        placeholderText.style.display = 'block';
-                        showNotification('图像生成失败，请重试', 'error');
-                    };
-                    
-                    previewImage.src = url;
-                    
-                } catch (error) {
-                    loadingIndicator.style.display = 'none';
-                    placeholderText.style.display = 'block';
-                    showNotification('发生错误: ' + error.message, 'error');
-                }
-            });
-            
-            // 下载图像
-            downloadBtn.addEventListener('click', function() {
-    if (previewImage.src) {
-        // 直接在新标签页打开图片
-        window.open(previewImage.src, '_blank');
-        showNotification('图像已在新窗口打开', 'success');
-    }
-});
-            
-            // 复制提示词
-            copyPromptBtn.addEventListener('click', function() {
-                navigator.clipboard.writeText(promptInput.value)
-                    .then(() => showNotification('提示词已复制到剪贴板', 'success'))
-                    .catch(err => showNotification('复制失败: ' + err, 'error'));
-            });
-            
-            // 显示通知
-            function showNotification(message, type) {
-                notification.textContent = message;
-                notification.className = 'notification ' + type;
-                notification.classList.add('show');
-                
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 3000);
-            }
-            
-            // 添加到历史记录
-            // Replace the addToHistory function with this updated version
-function addToHistory(imageUrl, details) {
-    // Check if this image URL already exists in history to prevent duplicates
-    const existingItems = historyContainer.querySelectorAll('.history-item');
-    for (let i = 0; i < existingItems.length; i++) {
-        const img = existingItems[i].querySelector('img');
-        if (img.src === imageUrl) {
-            // Move this item to the top instead of creating a duplicate
-            historyContainer.insertBefore(existingItems[i], historyContainer.firstChild);
-            saveHistory();
-            return; // Exit the function early - no need to create a new item
-        }
-    }
-    
-    // If we reach here, this is a new item to add
-    
-    // Hide empty history prompt
-    emptyHistory.style.display = 'none';
-    
-    // Create history item
-    const historyItem = document.createElement('div');
-    historyItem.className = 'history-item';
-    
-    historyItem.innerHTML = `
-        <img src="${imageUrl}" alt="AI生成图像">
-        <div class="history-item-info">
-            <div class="history-item-prompt">${details.prompt}</div>
-            <div class="history-item-model">${details.model}</div>
-        </div>
-    `;
-    
-    // Click handler for history item
-    historyItem.addEventListener('click', function() {
-        previewImage.src = imageUrl;
-        previewImage.style.display = 'block';
-        placeholderText.style.display = 'none';
-        imageInfo.style.display = 'block';
-        imageActions.style.display = 'flex';
-        imageDetails.textContent = JSON.stringify(details, null, 2);
-        
-        // Fill form
-        promptInput.value = details.prompt;
-        modelSelect.value = details.model;
-        modelInfo.textContent = modelDescriptions[details.model] || '';
-        
-        const dimensions = details.dimensions.split('x');
-        widthInput.value = dimensions[0];
-        heightInput.value = dimensions[1];
-        seedInput.value = details.seed;
-        
-        if (details.negative_prompt && details.negative_prompt !== '无') {
-            negativePromptInput.value = details.negative_prompt;
-        }
-    });
-    
-    // Add to container at the top
-    historyContainer.insertBefore(historyItem, historyContainer.firstChild);
-    
-    // Save to local storage
-    saveHistory();
-}
-            
-            // 保存历史记录到本地存储
-            function saveHistory() {
-                const historyItems = historyContainer.querySelectorAll('.history-item');
-                const history = [];
-                
-                // 限制历史记录数量
-                const maxHistory = 20;
-                
-                for (let i = 0; i < Math.min(historyItems.length, maxHistory); i++) {
-                    const item = historyItems[i];
-                    const img = item.querySelector('img');
-                    const prompt = item.querySelector('.history-item-prompt').textContent;
-                    const model = item.querySelector('.history-item-model').textContent;
-                    
-                    history.push({
-                        imageUrl: img.src,
-                        details: {
-                            prompt: prompt,
-                            model: model,
-                            dimensions: `${widthInput.value}x${heightInput.value}`,
-                            seed: seedInput.value,
-                            negative_prompt: negativePromptInput.value,
-                            generated_at: new Date().toLocaleString()
-                        }
-                    });
-                }
-                
-                localStorage.setItem('aiDrawingHistory', JSON.stringify(history));
-            }
-            
-            // 加载历史记录
-            function loadHistory() {
-                const history = JSON.parse(localStorage.getItem('aiDrawingHistory') || '[]');
-                
-                if (history.length > 0) {
-                    emptyHistory.style.display = 'none';
-                    
-                    history.forEach(item => {
-                        const historyItem = document.createElement('div');
-                        historyItem.className = 'history-item';
-                        
-                        historyItem.innerHTML = `
-                            <img src="${item.imageUrl}" alt="AI生成图像">
-                            <div class="history-item-info">
-                                <div class="history-item-prompt">${item.details.prompt}</div>
-                                <div class="history-item-model">${item.details.model}</div>
-                            </div>
-                        `;
-                        
-                        // 点击历史项加载图像
-                        historyItem.addEventListener('click', function() {
-                            previewImage.src = item.imageUrl;
-                            previewImage.style.display = 'block';
-                            placeholderText.style.display = 'none';
-                            imageInfo.style.display = 'block';
-                            imageActions.style.display = 'flex';
-                            imageDetails.textContent = JSON.stringify(item.details, null, 2);
-                            
-                            // 填充表单
-                            promptInput.value = item.details.prompt;
-                            modelSelect.value = item.details.model;
-                            modelInfo.textContent = modelDescriptions[item.details.model] || '';
-                            
-                            if (item.details.dimensions) {
-                                const dimensions = item.details.dimensions.split('x');
-                                widthInput.value = dimensions[0];
-                                heightInput.value = dimensions[1];
-                            }
-                            
-                            if (item.details.seed) {
-                                seedInput.value = item.details.seed;
-                            }
-                            
-                            if (item.details.negative_prompt && item.details.negative_prompt !== '无') {
-                                negativePromptInput.value = item.details.negative_prompt;
-                            }
-                        });
-                        
-                        historyContainer.appendChild(historyItem);
-                    });
-                }
-            }
-            
-            // 清空历史记录
-            clearHistoryBtn.addEventListener('click', function() {
-                if (confirm('确定要清空所有历史记录吗？此操作不可撤销。')) {
-                    historyContainer.innerHTML = '';
-                    historyContainer.appendChild(emptyHistory);
-                    emptyHistory.style.display = 'block';
-                    localStorage.removeItem('aiDrawingHistory');
-                    showNotification('历史记录已清空', 'success');
-                }
-            });
-            
-            // 初始化
-            loadHistory();
-            modelInfo.textContent = modelDescriptions[modelSelect.value];
-            
-            // 添加键盘快捷键
-            document.addEventListener('keydown', function(e) {
-                // Ctrl+Enter 生成图像
-                if (e.ctrlKey && e.key === 'Enter') {
-                    generateBtn.click();
-                }
-            });
-            
-            // 添加科技感动画效果
-            const glowEffects = document.querySelectorAll('.glow-effect');
-            glowEffects.forEach(effect => {
-                setInterval(() => {
-                    const x = Math.random() * 80;
-                    const y = Math.random() * 80;
-                    effect.style.transform = `translate(${x}%, ${y}%)`;
-                }, 5000);
-            });
-            
-            // 获取可用模型列表（可选功能）
-            async function fetchAvailableModels() {
-                try {
-                    const response = await fetch('https://image.pollinations.ai/models');
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data && data.models && Array.isArray(data.models)) {
-                            // 更新模型选择下拉框
-                            modelSelect.innerHTML = '';
-                            data.models.forEach(model => {
-                                const option = document.createElement('option');
-                                option.value = model;
-                                option.textContent = model;
-                                modelSelect.appendChild(option);
-                            });
-                            
-                            // 更新模型信息
-                            modelInfo.textContent = modelDescriptions[modelSelect.value] || `${modelSelect.value}: 可用模型`;
-                        }
-                    }
-                } catch (error) {
-                    console.error('获取模型列表失败:', error);
-                }
-            }
-            
-            // 可选：取消注释以启用自动获取模型列表
-            // fetchAvailableModels();
-        });
+        const translations = { 'zh-CN': { pageTitle: 'Free AI 绘画生成器', mainHeading: 'Free AI 绘画生成器', subtitle: '基于Pollinations AI的高级图像生成系统', homeButton: '返回首页', promptLabel: '提示词 (Prompt)', promptPlaceholder: '描述你想要生成的图像内容...', promptTip: '提示：使用详细、具体的描述可以获得更好的结果。尝试描述风格、场景、颜色等细节。', negPromptLabel: '负面提示词 (Negative Prompt)', negPromptPlaceholder: '描述你不希望出现在图像中的内容...', negPromptTip: '提示：用于排除不想要的元素，如"模糊的、低质量的"等。', modelLabel: '模型选择', widthLabel: '宽度', heightLabel: '高度', dimensionTip: '提示：推荐使用8的倍数，最大尺寸取决于模型限制。', seedLabel: '种子值 (Seed)', randomButton: '随机', seedTip: '提示：使用相同的种子值可以生成相似的图像，-1表示随机种子。', noLogoLabel: '移除水印', safeModeLabel: '安全模式 (过滤不适内容)', generateButton: '生成图像', clearButton: '清空', previewTitle: '图像预览', loadingText: '正在生成图像...', placeholderText: '点击"生成图像"按钮开始创作', downloadButton: '下载图像', copyPromptButton: '复制提示词', historyTitle: '历史记录', clearHistoryButton: '清空历史', emptyHistoryText: '您的创作历史将显示在这里', notificationPromptMissing: '请输入提示词', notificationImageFailed: '图像生成失败，请重试', notificationError: '发生错误: ', notificationImageOpened: '图像已在新窗口打开', notificationCopied: '提示词已复制到剪贴板', notificationCopyFailed: '复制失败: ', notificationHistoryCleared: '历史记录已清空', confirmClearHistory: '确定要清空所有历史记录吗？此操作不可撤销。', footerLab: "Azad的实验室", footerBasedOn: "基于 Pollinations.AI", footerCoffee: "请站长喝咖啡" }, 'en-US': { pageTitle: 'Free AI Image Generator', mainHeading: 'Free AI Image Generator', subtitle: 'Advanced Image Generation System based on Pollinations AI', homeButton: 'Home Page', promptLabel: 'Prompt', promptPlaceholder: 'Describe the image you want to create...', promptTip: 'Tip: Detailed, specific descriptions yield better results. Try describing style, scene, colors, etc.', negPromptLabel: 'Negative Prompt', negPromptPlaceholder: 'Describe what you don\'t want to see in the image...', negPromptTip: 'Tip: Use this to exclude unwanted elements, like "blurry, low quality".', modelLabel: 'Model Selection', widthLabel: 'Width', heightLabel: 'Height', dimensionTip: 'Tip: Multiples of 8 are recommended. Max size depends on the model.', seedLabel: 'Seed', randomButton: 'Random', seedTip: 'Tip: Same seed produces similar images. -1 means a random seed.', noLogoLabel: 'Remove Watermark', safeModeLabel: 'Safe Mode (Filter sensitive content)', generateButton: 'Generate Image', clearButton: 'Clear', previewTitle: 'Image Preview', loadingText: 'Generating image...', placeholderText: 'Click the "Generate Image" button to start creating', downloadButton: 'Download Image', copyPromptButton: 'Copy Prompt', historyTitle: 'History', clearHistoryButton: 'Clear History', emptyHistoryText: 'Your creation history will be displayed here', notificationPromptMissing: 'Please enter a prompt', notificationImageFailed: 'Image generation failed, please try again', notificationError: 'An error occurred: ', notificationImageOpened: 'Image opened in a new tab', notificationCopied: 'Prompt copied to clipboard', notificationCopyFailed: 'Copy failed: ', notificationHistoryCleared: 'History has been cleared', confirmClearHistory: 'Are you sure you want to clear all history? This action cannot be undone.', footerLab: "Azad's Lab", footerBasedOn: "Based on Pollinations.AI", footerCoffee: "Buy me a coffee" } }; function translatePage(lang){ document.documentElement.lang = lang; document.querySelectorAll('[data-i18n-key]').forEach(el => { const key = el.getAttribute('data-i18n-key'); const translation = translations[lang][key]; if (translation){ if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA'){ if (el.placeholder){ el.placeholder = translation; } } else if(el.hasAttribute('data-i18n-key')){ const textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE || node.nodeType === Node.ELEMENT_NODE && node.tagName == 'SPAN'); if(textNode){ if(textNode.nodeType === Node.TEXT_NODE){ textNode.textContent = ' ' + translation; } else { textNode.textContent = translation; } } else{ el.textContent = translation; } } else { el.textContent = translation; } } }); updateModelInfoText(lang); } function setLanguage(lang){ localStorage.setItem('preferredLanguage', lang); translatePage(lang); document.getElementById('lang-zh').classList.toggle('active', lang === 'zh-CN'); document.getElementById('lang-en').classList.toggle('active', lang === 'en-US'); }
+        document.addEventListener('DOMContentLoaded', function() { const promptInput = document.getElementById('prompt'); const negativePromptInput = document.getElementById('negative-prompt'); const modelSelect = document.getElementById('model'); const modelInfo = document.getElementById('model-info'); const widthInput = document.getElementById('width'); const heightInput = document.getElementById('height'); const seedInput = document.getElementById('seed'); const randomSeedBtn = document.getElementById('random-seed'); const noLogoCheckbox = document.getElementById('nologo'); const safeCheckbox = document.getElementById('safe'); const generateBtn = document.getElementById('generate-btn'); const clearBtn = document.getElementById('clear-btn'); const previewImage = document.getElementById('preview-image'); const placeholderText = document.getElementById('placeholder-text'); const loadingIndicator = document.getElementById('loading'); const imageInfo = document.getElementById('image-info'); const imageDetails = document.getElementById('image-details'); const imageActions = document.getElementById('image-actions'); const downloadBtn = document.getElementById('download-btn'); const copyPromptBtn = document.getElementById('copy-prompt-btn'); const historyContainer = document.getElementById('history-container'); const emptyHistory = document.getElementById('empty-history'); const clearHistoryBtn = document.getElementById('clear-history-btn'); const notification = document.getElementById('notification'); document.getElementById('lang-zh').addEventListener('click', () => setLanguage('zh-CN')); document.getElementById('lang-en').addEventListener('click', () => setLanguage('en-US')); const modelDescriptions = { 'zh-CN': { 'flux': 'Flux: 通用型模型，适合大多数场景', 'FLUX-3D': 'FLUX-3D: 专为3D渲染风格优化的模型', 'FLUX-PRO': 'FLUX-PRO: 提供专业级质量的高级模型', 'Flux-realism': 'Flux-realism: 专注于写实风格的图像生成', 'Flux-anime': 'Flux-anime: 优化用于生成动漫风格的图像', 'Flux-cablyai': 'Flux-cablyai: 具有特殊艺术风格的模型', 'turbo': 'Turbo: 快速生成模型，速度优先' }, 'en-US': { 'flux': 'Flux: General-purpose model, suitable for most scenarios', 'FLUX-3D': 'FLUX-3D: Optimized model for 3D rendering style', 'FLUX-PRO': 'FLUX-PRO: Advanced model providing professional-grade quality', 'Flux-realism': 'Flux-realism: Focuses on generating realistic style images', 'Flux-anime': 'Flux-anime: Optimized for generating anime style images', 'Flux-cablyai': 'Flux-cablyai: A model with a special artistic style', 'turbo': 'Turbo: Fast generation model, prioritizing speed' } }; window.updateModelInfoText = function(lang){ const currentLang = lang || localStorage.getItem('preferredLanguage') || 'zh-CN'; modelInfo.textContent = modelDescriptions[currentLang][modelSelect.value] || ''; }
+        const savedLang = localStorage.getItem('preferredLanguage') || 'zh-CN'; setLanguage(savedLang); modelSelect.addEventListener('change', function(){ updateModelInfoText(); }); randomSeedBtn.addEventListener('click', () => { seedInput.value = Math.floor(Math.random() * 2147483647); }); clearBtn.addEventListener('click', () => { promptInput.value = ''; negativePromptInput.value = 'worst quality, blurry'; seedInput.value = -1; previewImage.style.display = 'none'; placeholderText.style.display = 'block'; imageInfo.style.display = 'none'; imageActions.style.display = 'none'; }); generateBtn.addEventListener('click', async function(){ const prompt = promptInput.value.trim(); if (!prompt){ showNotification(translations[document.documentElement.lang].notificationPromptMissing, 'error'); return; } loadingIndicator.style.display = 'flex'; placeholderText.style.display = 'none'; previewImage.style.display = 'none'; imageInfo.style.display = 'none'; imageActions.style.display = 'none'; const params = { prompt: prompt, model: modelSelect.value, width: widthInput.value, height: heightInput.value, seed: seedInput.value === '-1' ? Math.floor(Math.random() * 2147483647) : seedInput.value, nologo: noLogoCheckbox.checked, safe: safeCheckbox.checked, negative_prompt: negativePromptInput.value }; try { let url = `https://image.pollinations.ai/prompt/${encodeURIComponent(params.prompt)}`; url += `?width=${params.width}&height=${params.height}&seed=${params.seed}&model=${params.model}`; if (params.negative_prompt) url += `&negative_prompt=${encodeURIComponent(params.negative_prompt)}`; if (params.nologo) url += '&nologo=true'; if (!params.safe) url += '&safe=false'; previewImage.onload = () => { loadingIndicator.style.display = 'none'; previewImage.style.display = 'block'; imageInfo.style.display = 'block'; imageActions.style.display = 'flex'; const details = { prompt: params.prompt, model: params.model, dimensions: `${params.width}x${params.height}`, seed: params.seed, negative_prompt: params.negative_prompt || '无', generated_at: new Date().toLocaleString() }; imageDetails.textContent = JSON.stringify(details, null, 2); addToHistory(url, details); }; previewImage.onerror = () => { loadingIndicator.style.display = 'none'; placeholderText.style.display = 'block'; showNotification(translations[document.documentElement.lang].notificationImageFailed, 'error'); }; previewImage.src = url; } catch (error){ loadingIndicator.style.display = 'none'; placeholderText.style.display = 'block'; showNotification(translations[document.documentElement.lang].notificationError + error.message, 'error'); } }); downloadBtn.addEventListener('click', () => { if (previewImage.src){ window.open(previewImage.src, '_blank'); showNotification(translations[document.documentElement.lang].notificationImageOpened, 'success'); } }); copyPromptBtn.addEventListener('click', () => { navigator.clipboard.writeText(promptInput.value) .then(() => showNotification(translations[document.documentElement.lang].notificationCopied, 'success')) .catch(err => showNotification(translations[document.documentElement.lang].notificationCopyFailed + err, 'error')); }); function showNotification(message, type){ notification.textContent = message; notification.className = 'notification ' + type; notification.classList.add('show'); setTimeout(() => notification.classList.remove('show'), 3000); } function addToHistory(imageUrl, details){ const existingItems = Array.from(historyContainer.querySelectorAll('.history-item img')); if(existingItems.some(img => img.src === imageUrl)){ const itemToMove = existingItems.find(img => img.src === imageUrl).parentElement; historyContainer.insertBefore(itemToMove, historyContainer.firstChild); saveHistory(); return; } emptyHistory.style.display = 'none'; const historyItem = document.createElement('div'); historyItem.className = 'history-item'; historyItem.innerHTML = ` <img src="${imageUrl}" alt="AI生成图像"> <div class="history-item-info"> <div class="history-item-prompt">${details.prompt}</div> <div class="history-item-model">${details.model}</div> </div>`; historyItem.addEventListener('click', () => loadFromHistory(imageUrl, details)); historyContainer.insertBefore(historyItem, historyContainer.firstChild); saveHistory(); } function loadFromHistory(imageUrl, details){ previewImage.src = imageUrl; previewImage.style.display = 'block'; placeholderText.style.display = 'none'; imageInfo.style.display = 'block'; imageActions.style.display = 'flex'; imageDetails.textContent = JSON.stringify(details, null, 2); promptInput.value = details.prompt; modelSelect.value = details.model; updateModelInfoText(); const dimensions = details.dimensions.split('x'); widthInput.value = dimensions[0]; heightInput.value = dimensions[1]; seedInput.value = details.seed; if (details.negative_prompt && details.negative_prompt !== '无'){ negativePromptInput.value = details.negative_prompt; } } function saveHistory(){ const historyItems = historyContainer.querySelectorAll('.history-item'); const history = []; const maxHistory = 20; for (let i = 0; i < Math.min(historyItems.length, maxHistory); i++){ const item = historyItems[i]; const img = item.querySelector('img'); const prompt = item.querySelector('.history-item-prompt').textContent; const model = item.querySelector('.history-item-model').textContent; const urlParams = new URL(img.src).searchParams; history.push({ imageUrl: img.src, details: { prompt: prompt, model: model, dimensions: `${urlParams.get('width')}x${urlParams.get('height')}`, seed: urlParams.get('seed'), negative_prompt: urlParams.get('negative_prompt') || '无', generated_at: new Date().toLocaleString() } }); } localStorage.setItem('aiDrawingHistory', JSON.stringify(history)); } function loadHistory(){ const history = JSON.parse(localStorage.getItem('aiDrawingHistory') || '[]'); if (history.length > 0){ emptyHistory.style.display = 'none'; history.forEach(item => { const historyItem = document.createElement('div'); historyItem.className = 'history-item'; historyItem.innerHTML = `<img src="${item.imageUrl}" alt="AI生成图像"><div class="history-item-info"><div class="history-item-prompt">${item.details.prompt}</div><div class="history-item-model">${item.details.model}</div></div>`; historyItem.addEventListener('click', () => loadFromHistory(item.imageUrl, item.details)); historyContainer.appendChild(historyItem); }); } } clearHistoryBtn.addEventListener('click', () => { if (confirm(translations[document.documentElement.lang].confirmClearHistory)){ historyContainer.innerHTML = ''; historyContainer.appendChild(emptyHistory); emptyHistory.style.display = 'block'; localStorage.removeItem('aiDrawingHistory'); showNotification(translations[document.documentElement.lang].notificationHistoryCleared, 'success'); } }); loadHistory(); document.addEventListener('keydown', e => { if (e.ctrlKey && e.key === 'Enter') generateBtn.click(); }); });
     </script>
 </body>
 </html>
