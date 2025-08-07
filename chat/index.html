@@ -1,13 +1,15 @@
+<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Free AI Chat</title>
-     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-<link rel="shortcut icon" href="/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
     <style>
-        /* Variables */
         :root {
             --primary-color: #0099ff;
             --secondary-color: #F5F5F5;
@@ -21,12 +23,11 @@
             --shadow: 0 2px 10px rgba(0, 153, 255, 0.15);
             --wechat-green: #0099ff;
             --border-radius: 8px;
-            --chat-font-size: 14px; /* Default font size for chat */
+            --chat-font-size: 14px;
             --tech-blue: #0099ff;
             --tech-dark-blue: #006bb3;
             --tech-light-blue: #e1f5fe;
             --tech-grey: #f0f0f0;
-            /* Sci-fi theme additions */
             --neon-blue: #00c3ff;
             --neon-purple: #9d00ff;
             --neon-cyan: #00fff2;
@@ -37,8 +38,8 @@
             --matrix-green: #00ff41;
             --cyber-yellow: #ffdd00;
             --digital-pattern: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231e88e5' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            --tech-grid-texture: url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='rgba(0, 195, 255, 0.1)' fill-opacity='0.2'%3E%3Crect x='0' y='0' width='1' height='50'/%3E%3Crect x='0' y='0' width='50' height='1'/%3E%3C/g%3E%3C/svg%3E");
         }
-        /* Dark theme */
         [data-theme="dark"] {
             --primary-color: #0099ff;
             --secondary-color: #2A2A2A;
@@ -50,11 +51,10 @@
             --user-msg-color: #004d80;
             --ai-msg-color: #3A3A3A;
             --shadow: 0 2px 10px rgba(0, 153, 255, 0.3);
-            /* Sci-fi dark theme */
             --hologram-blue: rgba(0, 195, 255, 0.15);
             --tech-bg-dark: #131c2e;
+            --tech-grid-texture: url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='rgba(0, 195, 255, 0.2)' fill-opacity='0.2'%3E%3Crect x='0' y='0' width='1' height='50'/%3E%3Crect x='0' y='0' width='50' height='1'/%3E%3C/g%3E%3C/svg%3E");
         }
-        /* Base styles */
         * {
             margin: 0;
             padding: 0;
@@ -73,7 +73,6 @@
             background-size: 25px 25px, 60px 60px;
             position: relative;
         }
-        /* Tech circuit lines overlay */
         body::after {
             content: "";
             position: fixed;
@@ -87,18 +86,16 @@
             background-size: 40px 40px;
             z-index: -1;
         }
-        /* Hide scrollbars but keep scrolling functionality */
         .chat-list, .chat-area, .dropdown-menu, .message-input {
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE/Edge */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
         .chat-list::-webkit-scrollbar,
         .chat-area::-webkit-scrollbar,
         .dropdown-menu::-webkit-scrollbar,
         .message-input::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, Opera */
+            display: none;
         }
-        /* Sidebar */
         .sidebar {
             width: 280px;
             background-color: var(--white);
@@ -130,7 +127,6 @@
             overflow: hidden;
             background-image: linear-gradient(90deg, rgba(0, 153, 255, 0.05) 0%, transparent 100%);
         }
-        /* Add pulsing glow behind title */
         .sidebar-header::before {
             content: "";
             position: absolute;
@@ -171,6 +167,32 @@
         @keyframes pulse-glow {
             0%, 100% { opacity: 0.1; }
             50% { opacity: 0.3; }
+        }
+        .language-toggle {
+            background: none;
+            border: none;
+            color: var(--light-text);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            padding: 4px 8px;
+            border-radius: 4px;
+            min-width: 28px;
+            text-align: center;
+        }
+        .language-toggle:hover {
+            color: var(--neon-blue);
+            text-shadow: 0 0 5px var(--neon-blue);
+            background-color: rgba(0, 195, 255, 0.1);
+        }
+        .language-toggle.active {
+            color: var(--neon-blue);
+            background-color: rgba(0, 195, 255, 0.2);
+            text-shadow: 0 0 3px rgba(0, 195, 255, 0.5);
         }
         .theme-toggle {
             background: none;
@@ -316,6 +338,7 @@
             color: var(--text-color);
             overflow: hidden;
             position: relative;
+            flex-shrink: 0;
         }
         .chat-item-icon::after {
             content: '';
@@ -332,7 +355,7 @@
             20% { left: 100%; }
             100% { left: 100%; }
         }
-        .chat-item-icon img {
+        .chat-item-icon img, .chat-item-icon svg {
             width: 100%;
             height: 100%;
             border-radius: var(--border-radius);
@@ -373,7 +396,6 @@
             color: #ff5252;
             transform: scale(1.1);
         }
-        /* Main content */
         .main-content {
             flex: 1;
             display: flex;
@@ -387,7 +409,6 @@
         body:not(.sidebar-hidden) .main-content {
             margin-left: 280px;
         }
-        /* Header */
         .header {
             padding: 15px;
             background-color: var(--white);
@@ -400,7 +421,6 @@
             background-image: linear-gradient(to right, rgba(0, 153, 255, 0.05) 0%, transparent 70%);
             position: relative;
         }
-        /* Tech decoration for header */
         .header::before {
             content: '';
             position: absolute;
@@ -430,7 +450,7 @@
         }
         .sidebar-toggle-btn:hover {
             color: var(--neon-blue);
-            text-shadow: 0 0 5px rgba(0, 195, 255, 0.5);
+            text-shadow: 0 0 5px rgba(0, 153, 255, 0.5);
         }
         .dropdown {
             position: relative;
@@ -509,6 +529,24 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .tier-label {
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #fff;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+            margin-left: 8px;
+        }
+        .tier-label.flower {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+        }
+        .tier-label.seed {
+            background: linear-gradient(45deg, #8A9A5B, #6B8E23);
         }
         .dropdown-item::before {
             content: '';
@@ -539,7 +577,7 @@
         }
         .settings-btn:hover, .font-size-btn:hover {
             color: var(--neon-blue);
-            text-shadow: 0 0 5px rgba(0, 195, 255, 0.5);
+            text-shadow: 0 0 5px rgba(0, 153, 255, 0.5);
             transform: rotate(15deg);
         }
         .font-size-controls {
@@ -579,7 +617,6 @@
             position: relative;
             overflow: hidden;
         }
-        /* Sci-fi decoration for modal */
         .modal-content::before {
             content: '';
             position: absolute;
@@ -611,16 +648,17 @@
             font-size: 18px;
             font-weight: bold;
             color: var(--neon-blue);
-            text-shadow: 0 0 5px rgba(0, 195, 255, 0.3);
+            text-shadow: 0 0 5px rgba(0, 153, 255, 0.3);
         }
         .close-modal {
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 24px;
             color: var(--light-text);
             transition: all 0.3s ease;
             z-index: 2;
+            line-height: 1;
         }
         .close-modal:hover {
             color: var(--neon-blue);
@@ -762,7 +800,6 @@
             background-color: var(--tech-dark-blue);
             box-shadow: 0 0 15px rgba(0, 153, 255, 0.3);
         }
-        /* Chat area */
         .chat-area {
             flex: 1;
             overflow-y: auto;
@@ -772,7 +809,6 @@
                 linear-gradient(0deg, rgba(0, 153, 255, 0.02), transparent),
                 var(--digital-pattern);
         }
-        /* Message timestamp */
         .message-time {
             text-align: center;
             margin: 10px 0;
@@ -794,6 +830,17 @@
         .message-user {
             flex-direction: row-reverse;
         }
+        .message-ai.message-system .message-bubble { 
+            background-color: #ffebee;
+            color: #c62828;
+            border-top-left-radius: 12px;
+            border: 1px solid #ffcdd2;
+        }
+        [data-theme="dark"] .message-ai.message-system .message-bubble { 
+            background-color: #4a2727;
+            color: #ff8a80;
+            border-color: #5f3131;
+        }
         .message-avatar {
             width: 36px;
             height: 36px;
@@ -806,6 +853,7 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), 0 0 5px rgba(0, 153, 255, 0.2);
             position: relative;
             z-index: 1;
+            flex-shrink: 0;
         }
         .message-avatar::before {
             content: '';
@@ -817,54 +865,169 @@
             background: linear-gradient(135deg, rgba(0, 195, 255, 0.2), transparent);
             z-index: -1;
         }
-        .message-avatar img {
+        .message-avatar img, .message-avatar svg {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-        /* Updated chat bubble style */
         .message-bubble {
             max-width: 70%;
             padding: 10px 15px;
             border-radius: 12px;
             position: relative;
             font-size: var(--chat-font-size);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05), 0 0 5px rgba(0, 153, 255, 0.05);
-            background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.05), transparent);
-            backdrop-filter: blur(5px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease; 
         }
         .message-user .message-bubble {
             background-color: var(--user-msg-color);
-            border-top-right-radius: 0;
             border: 1px solid rgba(0, 153, 255, 0.15);
+            border-top-right-radius: 2px;
         }
-        .message-ai .message-bubble {
-            background-color: var(--ai-msg-color);
-            border-top-left-radius: 0;
-            border: 1px solid rgba(0, 153, 255, 0.1);
+        .chat-area .message-ai .message-bubble {
+            border-top-left-radius: 2px !important;
+            position: relative !important;
+            overflow: hidden !important;
+            z-index: 1 !important;
+            background-color: #f0f8ff !important;
+            background-image: 
+                linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 50%, #ddeeff 100%),
+                var(--tech-grid-texture),
+                radial-gradient(ellipse at top left, rgba(0, 153, 255, 0.1), transparent 60%) !important;
+        
+            border: 1px solid rgba(0, 153, 255, 0.35) !important;
+            box-shadow:
+                0 4px 16px rgba(0, 0, 0, 0.12),
+                0 2px 8px rgba(0, 153, 255, 0.18),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
         }
-        /* Sci-fi glow effect for AI messages */
-        .message-ai .message-bubble::before {
+        
+        [data-theme="dark"] .chat-area .message-ai .message-bubble {
+            background-color: #2d3748 !important;
+            background-image: 
+                linear-gradient(135deg, #2d3748 0%, #2a3441 50%, #253040 100%),
+                var(--tech-grid-texture),
+                radial-gradient(ellipse at top left, rgba(0, 195, 255, 0.18), transparent 60%) !important;
+        
+            border: 1px solid rgba(0, 195, 255, 0.45) !important;
+            box-shadow:
+                0 4px 16px rgba(0, 0, 0, 0.35),
+                0 2px 8px rgba(0, 195, 255, 0.28),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+        }
+        
+        div.chat-area div.message.message-ai div.message-bubble {
+            background: #f0f8ff !important;
+            background-image: 
+                linear-gradient(135deg, #f0f8ff, #ddeeff),
+                var(--tech-grid-texture) !important;
+            border: 1px solid rgba(0, 153, 255, 0.4) !important;
+        }
+        
+        [data-theme="dark"] div.chat-area div.message.message-ai div.message-bubble {
+            background: #2d3748 !important;
+            background-image: 
+                linear-gradient(135deg, #2d3748, #253040),
+                var(--tech-grid-texture) !important;
+            border: 1px solid rgba(0, 195, 255, 0.5) !important;
+        }
+        
+        .message-bubble[class*="message-bubble"] {
+            background: #f0f8ff !important;
+        }
+        
+        [data-theme="dark"] .message-bubble[class*="message-bubble"] {
+            background: #2d3748 !important;
+        }
+        
+        .message-ai:not([id="typingIndicator"]) .message-bubble::before {
             content: '';
             position: absolute;
-            top: -2px;
-            left: -2px;
-            width: calc(100% + 4px);
-            height: calc(100% + 4px);
-            background: linear-gradient(45deg, var(--neon-blue), transparent, var(--neon-cyan));
-            border-radius: inherit;
+            top: 0;
+            left: -150%; 
+            width: 40%; 
+            height: 100%;
+            background: linear-gradient(110deg, 
+                transparent, 
+                rgba(0, 195, 255, 0.3),
+                transparent
+            );
+            transform: skewX(-25deg); 
             z-index: -1;
-            opacity: 0.3;
-            animation: borderflow 3s infinite alternate;
-            filter: blur(5px);
+            animation: flow-light 6s infinite linear;
+            animation-delay: 3s; 
         }
-        @keyframes borderflow {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
+        
+        .chat-area .message-ai .message-bubble:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.15),
+                0 4px 12px rgba(0, 153, 255, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
+        
+        [data-theme="dark"] .chat-area .message-ai .message-bubble:hover {
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.45),
+                0 4px 12px rgba(0, 195, 255, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+        }
+
         .message-text {
             word-wrap: break-word;
             white-space: pre-wrap;
+        }
+        .message-text > *:first-child {
+            margin-top: 0;
+        }
+        .message-text > *:last-child {
+            margin-bottom: 0;
+        }
+        .message-text h1, .message-text h2, .message-text h3 {
+            margin-top: 1em;
+            margin-bottom: 0.5em;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3em;
+        }
+        .message-text h1 { font-size: 1.5em; }
+        .message-text h2 { font-size: 1.3em; }
+        .message-text h3 { font-size: 1.1em; }
+        .message-text p {
+            margin-bottom: 1em;
+            line-height: 1.6;
+        }
+        .message-text a {
+            color: var(--tech-blue);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease-in-out;
+        }
+        .message-text a:hover {
+            color: var(--tech-dark-blue);
+            border-bottom-color: var(--tech-dark-blue);
+        }
+        .message-text ul, .message-text ol {
+            padding-left: 20px;
+            margin-bottom: 1em;
+        }
+        .message-text li {
+            margin-bottom: 0.4em;
+        }
+        .message-text blockquote {
+            margin: 1em 0;
+            padding: 8px 15px;
+            border-left: 4px solid var(--neon-blue);
+            background-color: var(--secondary-color);
+            color: var(--light-text);
+            border-radius: 0 4px 4px 0;
+        }
+        .message-text img {
+            max-width: 100%;
+            border-radius: var(--border-radius);
+            margin: 10px 0;
         }
         .message-text code {
             font-family: 'Courier New', monospace;
@@ -872,6 +1035,7 @@
             padding: 2px 4px;
             border-radius: 3px;
             border-left: 2px solid var(--neon-blue);
+            font-size: 0.9em;
         }
         .message-text pre {
             background-color: rgba(0, 0, 0, 0.05);
@@ -881,12 +1045,19 @@
             margin: 8px 0;
             position: relative;
             font-family: 'Courier New', monospace;
-            white-space: pre-wrap;
-            word-break: break-all;
+            white-space: pre; 
+            word-break: normal;
             border-left: 3px solid var(--neon-blue);
             box-shadow: inset 0 0 10px rgba(0, 153, 255, 0.05);
             background-image: linear-gradient(to bottom, rgba(0, 153, 255, 0.03), transparent);
         }
+        .message-text pre code {
+          background: none;
+          padding: 0;
+          border: none;
+          white-space: inherit;
+        }
+    
         .code-preview-btn {
             display: inline-block;
             margin-top: 5px;
@@ -907,7 +1078,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 153, 255, 0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(0, 195, 255, 0.2), transparent);
             transition: 0.5s;
         }
         .code-preview-btn:hover {
@@ -944,11 +1115,23 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+      
         .message-actions {
-            margin-top: 5px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(0, 153, 255, 0.1);
             display: flex;
             gap: 10px;
-            justify-content: flex-end;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+      
+        .message-user .message-actions {
+            justify-content: flex-start;
+        }
+        .message-ai .message-actions {
+            justify-content: space-between;
         }
         .message-copy, .message-model {
             font-size: 12px;
@@ -963,6 +1146,7 @@
         .message-model {
             font-style: italic;
             position: relative;
+            cursor: default;
         }
         .message-model::before {
             content: '';
@@ -978,7 +1162,6 @@
         .message-model:hover::before {
             transform: scaleX(1);
         }
-        /* Typing indicator */
         .typing-indicator {
             display: flex;
             align-items: center;
@@ -1011,1385 +1194,235 @@
             0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
             30% { transform: translateY(-5px); opacity: 1; }
         }
-        /* Input area */
-        .input-area {
-            padding: 15px;
-            background-color: var(--white);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            gap: 10px;
-            align-items: flex-end;
-            position: relative;
-            background-image: linear-gradient(to top, rgba(0, 153, 255, 0.03), transparent);
-        }
-        /* Tech decoration for input area */
-        .input-area::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 15%;
-            right: 15%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
-        }
-        .message-input {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            resize: none;
-            height: 50px;
-            max-height: 200px;
-            overflow-y: auto;
-            background-color: var(--white);
-            color: var(--text-color);
-            transition: all 0.3s ease;
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
-            background-image: linear-gradient(to bottom, rgba(0, 153, 255, 0.02), transparent);
-        }
-        .message-input:focus {
-            outline: none;
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 0 2px rgba(0, 195, 255, 0.1), inset 0 0 10px rgba(0, 153, 255, 0.03);
-        }
-        .send-btn {
-            background-color: var(--tech-blue);
-            color: var(--white);
-            border: none;
-            border-radius: var(--border-radius);
-            width: 50px;
-            height: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 10px rgba(0, 153, 255, 0.2);
-        }
-        .send-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, var(--neon-blue), var(--tech-blue));
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .send-btn::after {
-            content: '';
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
-            top: -20px;
-            left: -20px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .send-btn:hover {
-            background-color: var(--tech-dark-blue);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 153, 255, 0.3);
-        }
-        .send-btn:hover::before {
-            opacity: 1;
-        }
-        .send-btn:hover::after {
-            opacity: 0.5;
-        }
-        .send-btn:active {
-            transform: translateY(0);
-        }
-        .send-btn i {
-            position: relative;
-            z-index: 1;
-        }
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        .clear-btn, .export-btn {
-            background: none;
-            border: none;
-            color: var(--light-text);
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .clear-btn::after, .export-btn::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, var(--neon-blue) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: -1;
-        }
-        .clear-btn:hover, .export-btn:hover {
-            color: var(--neon-blue);
-            transform: scale(1.1);
-        }
-        .clear-btn:hover::after, .export-btn:hover::after {
-            opacity: 0.2;
-        }
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                z-index: 100;
-            }
-            body:not(.sidebar-hidden) .main-content {
-                margin-left: 0;
-            }
-            .font-size-controls {
-                display: none;
-            }
-            .action-buttons {
-                position: absolute;
-                right: 15px;
-            }
-            .model-selection {
-                justify-content: flex-start;
-            }
-            .message-bubble {
-                max-width: 80%;
-            }
-            .dropdown-toggle {
-                max-width: 150px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-        }
-        /* Futuristic glowing effects */
-        .glowing-border {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: inherit;
-            pointer-events: none;
-        }
-        @keyframes border-pulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
+        .input-area { padding: 15px; background-color: var(--white); border-top: 1px solid var(--border-color); display: flex; gap: 10px; align-items: flex-end; position: relative; background-image: linear-gradient(to top, rgba(0, 153, 255, 0.03), transparent); }
+        .input-area::before { content: ''; position: absolute; top: 0; left: 15%; right: 15%; height: 1px; background: linear-gradient(90deg, transparent, var(--neon-blue), transparent); }
+        .message-input { flex: 1; padding: 12px; border: 1px solid var(--border-color); border-radius: var(--border-radius); resize: none; height: 50px; max-height: 200px; overflow-y: auto; background-color: var(--white); color: var(--text-color); transition: all 0.3s ease; box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05); background-image: linear-gradient(to bottom, rgba(0, 153, 255, 0.02), transparent); }
+        .message-input:focus { outline: none; border-color: var(--neon-blue); box-shadow: 0 0 0 2px rgba(0, 195, 255, 0.1), inset 0 0 10px rgba(0, 153, 255, 0.03); }
+        .message-input:disabled { background-color: var(--secondary-color); cursor: not-allowed; opacity: 0.7; }
+        .send-btn { background-color: var(--tech-blue); color: var(--white); border: none; border-radius: var(--border-radius); width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; box-shadow: 0 0 10px rgba(0, 153, 255, 0.2); }
+        .send-btn:disabled { background-color: var(--light-text); cursor: not-allowed; transform: none; box-shadow: none; }
+        .send-btn:disabled::before, .send-btn:disabled::after { display: none; }
+        .send-btn::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, var(--neon-blue), var(--tech-blue)); z-index: -1; opacity: 0; transition: opacity 0.3s ease; }
+        .send-btn::after { content: ''; position: absolute; width: 30px; height: 30px; background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%); top: -20px; left: -20px; opacity: 0; transition: opacity 0.3s ease; }
+        .send-btn:hover:not(:disabled) { background-color: var(--tech-dark-blue); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 153, 255, 0.3); }
+        .send-btn:hover:not(:disabled)::before { opacity: 1; }
+        .send-btn:hover:not(:disabled)::after { opacity: 0.5; }
+        .send-btn:active:not(:disabled) { transform: translateY(0); }
+        .send-btn i { position: relative; z-index: 1; }
+        .action-buttons { display: flex; gap: 10px; }
+        .clear-btn, .export-btn { background: none; border: none; color: var(--light-text); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .clear-btn::after, .export-btn::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, var(--neon-blue) 0%, transparent 70%); opacity: 0; transition: opacity 0.3s ease; z-index: -1; }
+        .clear-btn:hover, .export-btn:hover { color: var(--neon-blue); transform: scale(1.1); }
+        .clear-btn:hover::after, .export-btn:hover::after { opacity: 0.2; }
+        .sci-fi-btn { margin: 1px 15px 15px 15px; padding: 4px; background-color: var(--tech-blue); color: var(--white); border: none; border-radius: var(--border-radius); cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 500; transition: all 0.3s ease; position: relative; overflow: hidden; text-align: center; box-shadow: 0 0 10px rgba(0, 153, 255, 0.2); }
+        .sci-fi-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent); transition: 0.5s; }
+        .sci-fi-btn:hover { background-color: var(--tech-dark-blue); transform: translateY(-1px); box-shadow: 0 5px 15px rgba(0, 153, 255, 0.3); }
+        .sci-fi-btn:hover::before { left: 100%; }
+        .sci-fi-btn:active { transform: translateY(0); }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes glow { 0% { opacity: 0.5; } 100% { opacity: 1; } }
+        .glowing-border { position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--border-radius); box-shadow: 0 0 5px var(--neon-blue), inset 0 0 5px var(--neon-blue); opacity: 0; animation: border-pulse 2s infinite alternate; }
+        @keyframes border-pulse { 0% { opacity: 0; } 100% { opacity: 0.5; } }
+        .tech-grid { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(0, 153, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 153, 255, 0.03) 1px, transparent 1px); background-size: 20px 20px; pointer-events: none; z-index: -1; }
+        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+        .particle { position: absolute; width: 3px; height: 3px; background: var(--neon-blue); border-radius: 50%; opacity: 0.3; animation: float 20s infinite linear; }
+        @keyframes float { 0% { transform: translateY(0) rotate(0deg); opacity: 0; } 10% { opacity: 0.3; } 90% { opacity: 0.3; } 100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; } }
+        @media (max-width: 768px) { .sidebar { width: 100%; z-index: 100; } body:not(.sidebar-hidden) .main-content { margin-left: 0; } .font-size-controls { display: none; } .action-buttons { position: absolute; right: 15px; } .model-selection { justify-content: flex-start; } .message-bubble { max-width: 80%; } .dropdown-toggle { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } }
+        .api-key-info { font-size: 12px; color: var(--light-text); margin-top: 5px; }
+        .api-key-info a { color: var(--tech-blue); text-decoration: none; }
+        .api-key-info a:hover { text-decoration: underline; }
+        .version-info { margin-top: 20px; font-size: 13px; color: var(--text-color); }
+        .version-info .version-title { font-weight: bold; display: flex; align-items: center; gap: 8px; margin-bottom: 8px; color: var(--tech-dark-blue); }
+        .version-info ul { list-style-type: none; padding-left: 0; }
+        .version-info li { display: flex; align-items: center; margin-bottom: 6px; line-height: 1.5; }
+        .version-info li i { margin-right: 8px; color: var(--neon-blue); }
     </style>
 </head>
-<body class="sidebar-hidden">
-    <!-- Sidebar for conversations -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-title"><a href="https://freeai.aihub.ren" style="text-decoration: none; color: inherit;"><span style="color:#0099ff"><b>FreeAI</b></span></a> <br><small> 基于 Pollinations.AI </small></div>
-            <div style="display: flex; align-items: center;">
-                <button class="theme-toggle" id="themeToggle">
-                    <i class="fas fa-moon"></i>
-                </button>&nbsp;&nbsp;&nbsp;
-                <button class="clear-all-btn" id="clearAllBtn">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        </div>
-        <div class="search-container">
-            <input type="text" class="search-input" id="searchInput" placeholder="搜索会话...">
-            <i class="fas fa-search search-icon"></i>
-        </div>
-        <button class="new-chat-btn" id="newChatBtn">
-            <i class="fas fa-plus"></i>
-            <span>新建会话</span>
-        </button>
-        <style>
-.sci-fi-btn {
-            margin: 1px 15px 15px 15px;
-            padding: 4px;
-            background-color: var(--tech-blue);
-            color: var(--white);
-            border: none;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            text-align: center;
-            box-shadow: 0 0 10px rgba(0, 153, 255, 0.2);
-        }
-        .sci-fi-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: 0.5s;
-        }
-        .sci-fi-btn:hover {
-            background-color: var(--tech-dark-blue);
-            transform: translateY(-1px);
-            box-shadow: 0 5px 15px rgba(0, 153, 255, 0.3);
-        }
-        .sci-fi-btn:hover::before {
-            left: 100%;
-        }
-        .sci-fi-btn:active {
-            transform: translateY(0);
-        }
-        .glowing-border {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: var(--border-radius);
-            box-shadow: 0 0 5px var(--neon-blue), inset 0 0 5px var(--neon-blue);
-            opacity: 0;
-            animation: border-pulse 2s infinite alternate;
-        }
-        @keyframes border-pulse {
-            0% { opacity: 0; }
-            100% { opacity: 0.5; }
-        }
-</style>
-
-<a href="https://freeai.aihub.ren" class="sci-fi-btn" style="text-decoration: none; font-size: 14px;"">
-    <span class="glowing-border"></span>
-    <span class="glowing-border"></span>
-<i class="fas fa-circle-arrow-left"></i>
- &nbsp;
-    返回首页
-</a>
-        <div class="chat-list" id="chatList">
-            <!-- Chat history items will be dynamically added here -->
-        </div>
-    </div>
-    <!-- Main content area -->
-    <div class="main-content">
-        <div class="header">
-            <div class="model-selection">
-                <button class="sidebar-toggle-btn" id="sidebarToggleBtn">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="dropdown" id="modelDropdown">
-                    <button class="dropdown-toggle">
-                        <span id="selectedModel">OpenAI GPT-4o-mini</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="dropdown-menu" id="modelMenu">
-                        <!-- Model options will be dynamically added here -->
-                    </div>
-                </div>
-                <button class="settings-btn" id="settingsBtn">
-                    <i class="fas fa-cog"></i>
-                </button>
-                <!-- Font size controls -->
-                <div class="font-size-controls">
-                    <button class="font-size-btn" id="fontSizeDecreaseBtn" title="Decrease Font Size">
-                        <i class="fas fa-font"></i><i class="fas fa-minus"></i>
-                    </button>
-                    <button class="font-size-btn" id="fontSizeIncreaseBtn" title="Increase Font Size">
-                        <i class="fas fa-font"></i><i class="fas fa-plus"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="action-buttons">
-                <button class="clear-btn" id="clearChatBtn" title="清除对话">
-                    <i class="fas fa-broom"></i>
-                </button>
-                <button class="export-btn" id="exportChatBtn" title="导出对话">
-                    <i class="fas fa-download"></i>
-                </button>
-            </div>
-        </div>
-        <div class="chat-area" id="chatArea">
-            <!-- Messages will be dynamically added here -->
-        </div>
-        <div class="input-area">
-            <textarea class="message-input" id="messageInput" placeholder="输入消息开始对话..." rows="1"></textarea>
-            <button class="send-btn" id="sendBtn">
-                <i class="fas fa-paper-plane"></i>
-            </button>
-        </div>
-</div>
-<style>
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-@keyframes glow {
-  0% { opacity: 0.5; }
-  100% { opacity: 1; }
-}
-/* Tech grid overlay */
-.tech-grid {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image:
-    linear-gradient(rgba(0, 153, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 153, 255, 0.03) 1px, transparent 1px);
-  background-size: 20px 20px;
-  pointer-events: none;
-  z-index: -1;
-}
-/* Floating particles */
-.particles {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: -1;
-}
-.particle {
-  position: absolute;
-  width: 3px;
-  height: 3px;
-  background: var(--neon-blue);
-  border-radius: 50%;
-  opacity: 0.3;
-  animation: float 20s infinite linear;
-}
-@keyframes float {
-  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-  10% { opacity: 0.3; }
-  90% { opacity: 0.3; }
-  100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
-}
-</style>
-<!-- Tech grid overlay -->
-<div class="tech-grid"></div>
-<!-- Floating particles -->
-<div class="particles" id="particles"></div>
-    <!-- Settings Modal -->
-    <div class="modal" id="settingsModal">
-        
-
-
-<div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">设置</h5>
-                <button class="close-modal" id="closeSettingsModal">
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-
-
-<hr style="margin: 20px 0; border-top: 1px solid var(--border-color);">
-<div class="about-section">
-    <h5 style="color: var(--tech-dark-blue); margin-bottom: 14px;">关于</h5>
-
-    <p style="font-size: 14px; color: var(--text-color);">
-        <i class="fas fa-info-circle" style="color: var(--neon-blue);"></i> 
-        本项目由 <a href="https://other.azad.asia" target="_blank" style="color: var(--tech-blue); text-decoration: none;">Azad</a> 开发 
-      &nbsp; &nbsp; <i class="fas fa-robot" style="color: var(--neon-blue);"></i>
-        基于 <a href="https://pollinations.ai" target="_blank" style="color: var(--tech-blue); text-decoration: none;">Pollinations.AI</a> 提供服务
-<br><br>
-<i class="fab fa-github" style="color: var(--neon-blue);"></i>项目开源地址
-        <a href="https://github.com/Azad-sl/FreeAI" target="_blank" style="color: var(--tech-blue); text-decoration: none;">Github</a> &nbsp; &nbsp; 
-<i class="fas fa-medal" style="color: var(--neon-blue);"></i> 给站长
-        <a href="https://home.azad.asia/dashang" target="_blank" style="color: var(--tech-blue); text-decoration: none;">加个鸡腿</a> 
-    </p>
-</div>
-<br>
-
-                    <label class="form-label" for="systemPrompt">系统提示词</label>
-                    <textarea class="form-control" id="systemPrompt" rows="5" placeholder="输入系统提示词..."></textarea>
-                    <div class="prompt-examples">
-                        <div class="prompt-example" data-prompt="You are a helpful assistant that provides accurate and concise information.">通用AI助手</div>
-                        <div class="prompt-example" data-prompt="You are a creative writer who helps craft engaging stories and content.">创意写作者</div>
-                        <div class="prompt-example" data-prompt="You are a programming expert who provides clear code examples and explanations.">代码写作助手</div>
-                        <div class="prompt-example" data-prompt="You are a language learning tutor who helps with translations and grammar.">语言学习导师</div>
-                        <div class="prompt-example" data-prompt="You are a data analyst who helps interpret and visualize information.">数据分析员</div>
-                        <div class="prompt-example" data-prompt="I want you to act as a debater. I will provide you with some topics related to current events and your task is to research both sides of the debates, present valid arguments for each side, refute opposing points of view, and draw persuasive conclusions based on evidence. Your goal is to help people come away from the discussion with increased knowledge and insight into the topic at hand. My first request is 【I want an opinion piece about Deno.】">辩手</div>
-                        <div class="prompt-example" data-prompt="I want you to act as a poet. You will create poems that evoke emotions and have the power to stir people's soul. Write on any topic or theme but make sure your words convey the feeling you are trying to express in beautiful yet meaningful ways. You can also come up with short verses that are still powerful enough to leave an imprint in readers' minds. My first request is 【I need a poem about love.】">诗人</div>
-                        <div class="prompt-example" data-prompt="I want you to act as a philosopher. I will provide some topics or questions related to the study of philosophy, and it will be your job to explore these concepts in depth. This could involve conducting research into various philosophical theories, proposing new ideas or finding creative solutions for solving complex problems. My first request is 【I need help developing an ethical framework for decision making.】">哲学家</div>
-                        <div class="prompt-example" data-prompt="I want you to act as a mental health adviser. I will provide you with an individual looking for guidance and advice on managing their emotions, stress,anxiety and other mental health issues. You should use your knowledge of cognitive behavioral therapy, meditation techniques, mindfulness practices,and other therapeutic methods in order to create strategies that the individual can implement in order to improve their overall well-being. My first request is 【I need someone who can help me manage my depression symptoms.】">心理健康顾问</div>
-                        <div class="prompt-example" data-prompt="Please acknowledge my following request. Please respond to me as a product manager. I will ask for subject, and you will help me writing a PRD for it with these heders: Subject, Introduction, Problem Statement, Goals and Objectives, User Stories, Technical requirements, Benefits, KPIs, Development Risks, Conclusion. Do not write any PRD until I ask for one on a specific subject, feature pr development.">产品经理</div>
-<div class="prompt-example" data-prompt="你是一位文本大纲生成专家，擅长根据用户的需求创建一个有条理且易于扩展成完整文章的大纲，你拥有强大的主题分析能力，能准确提取关键信息和核心要点。具备丰富的文案写作知识储备，熟悉各种文体和题材的文案大纲构建方法。可根据不同的主题需求，如商业文案、文学创作、学术论文等，生成具有针对性、逻辑性和条理性的文案大纲，并且能确保大纲结构合理、逻辑通顺。该大纲应该包含以下部分：引言：介绍主题背景，阐述撰写目的，并吸引读者兴趣。主体部分：第一段落：详细说明第一个关键点或论据，支持观点并引用相关数据或案例。第二段落：深入探讨第二个重点，继续论证或展开叙述，保持内容的连贯性和深度。第三段落：如果有必要，进一步讨论其他重要方面，或者提供不同的视角和证据。结论：总结所有要点，重申主要观点，并给出有力的结尾陈述，可以是呼吁行动、提出展望或其他形式的收尾。创意性标题：为文章构思一个引人注目的标题，确保它既反映了文章的核心内容又能激发读者的好奇心。">文案大纲生成</div>
-<div class="prompt-example" data-prompt="你是一位大模型提示词生成专家，请根据用户的需求编写一个智能助手的提示词，来指导大模型进行内容生成，要求：1. 以 Markdown 格式输出2. 贴合用户需求，描述智能助手的定位、能力、知识储备3. 提示词应清晰、精确、易于理解，在保持质量的同时，尽可能简洁4. 只输出提示词，不要输出多余解释">提示词生成</div>
-<div class="prompt-example" data-prompt="你是一个中英文翻译专家，将用户输入的中文翻译成英文，或将用户输入的英文翻译成中文。对于非中文内容，它将提供中文翻译结果。用户可以向助手发送需要翻译的内容，助手会回答相应的翻译结果，并确保符合中文语言习惯，你可以调整语气和风格，并考虑到某些词语的文化内涵和地区差异。同时作为翻译家，需将原文翻译成具有信达雅标准的译文。【信】即忠实于原文的内容与意图；【达】意味着译文应通顺易懂，表达清晰；【雅】 则追求译文的文化审美和语言的优美。目标是创作出既忠于原作精神，又符合目标语言文化和读者审美的翻译。">中英翻译专家</div>
-
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelSettingsBtn">取消</button>
-                <button class="btn btn-primary" id="saveSettingsBtn">保存</button>
-            </div>
-        </div>
-    </div>
-    <script>
-        // Model data from your provided JSON
-        const allModels = [
-            {
-                name: "openai",
-                type: "chat",
-                censored: true,
-                description: "OpenAI GPT-4o-mini",
-                baseModel: true,
-                vision: true,
-                group: "OpenAI"
+<body>
+    <div class="sidebar" id="sidebar"> <div class="sidebar-header"> <div class="sidebar-title" data-translate-key="sidebar_title"><a href="https://freeai.aihub.ren" style="text-decoration: none; color: inherit;"><span style="color:#0099ff"><b>FreeAI</b></span></a> <br><small data-translate-key="sidebar_subtitle"> Powered by Pollinations.AI </small></div> <div style="display: flex; align-items: center;"> <button class="language-toggle" id="languageToggle"> <span id="languageText">CN</span> </button> <button class="theme-toggle" id="themeToggle"> <i class="fas fa-moon"></i> </button>&nbsp;&nbsp;&nbsp; <button class="clear-all-btn" id="clearAllBtn"> <i class="fas fa-trash"></i> </button> </div> </div> <div class="search-container"> <input type="text" class="search-input" id="searchInput" data-translate-key-placeholder="search_placeholder" placeholder="Search conversations..."> <i class="fas fa-search search-icon"></i> </div> <button class="new-chat-btn" id="newChatBtn"> <i class="fas fa-plus"></i> <span data-translate-key="new_chat_btn">New Chat</span> </button> <a href="https://freeai.aihub.ren" class="sci-fi-btn" style="text-decoration: none; font-size: 14px;"> <span class="glowing-border"></span> <i class="fas fa-circle-arrow-left"></i> &nbsp; <span data-translate-key="back_home_btn">Back to Home</span> </a> <div class="chat-list" id="chatList"></div> </div> <div class="main-content"> <div class="header"> <div class="model-selection"> <button class="sidebar-toggle-btn" id="sidebarToggleBtn"> <i class="fas fa-bars"></i> </button> <div class="dropdown" id="modelDropdown"> <button class="dropdown-toggle"> <span id="selectedModel">OpenAI GPT-4o-mini</span> <i class="fas fa-chevron-down"></i> </button> <div class="dropdown-menu" id="modelMenu"></div> </div> <button class="settings-btn" id="settingsBtn"> <i class="fas fa-cog"></i> </button> <div class="font-size-controls"> <button class="font-size-btn" id="fontSizeDecreaseBtn" data-translate-key="decrease_font_title" title="Decrease Font Size"> <i class="fas fa-font"></i><i class="fas fa-minus"></i> </button> <button class="font-size-btn" id="fontSizeIncreaseBtn" data-translate-key="increase_font_title" title="Increase Font Size"> <i class="fas fa-font"></i><i class="fas fa-plus"></i> </button> </div> </div> <div class="action-buttons"> <button class="clear-btn" id="clearChatBtn" data-translate-key="clear_chat_title" title="Clear Chat"> <i class="fas fa-broom"></i> </button> <button class="export-btn" id="exportChatBtn" data-translate-key="export_chat_title" title="Export Chat"> <i class="fas fa-download"></i> </button> </div> </div> <div class="chat-area" id="chatArea"></div> <div class="input-area"> <textarea class="message-input" id="messageInput" data-translate-key-placeholder="message_input_placeholder" placeholder="Type a message to start chatting..." rows="1"></textarea> <button class="send-btn" id="sendBtn"> <i class="fas fa-paper-plane"></i> </button> </div> </div> <div class="tech-grid"></div> <div class="particles" id="particles"></div> <div class="modal" id="settingsModal"> <div class="modal-content"> <div class="modal-header"> <h5 class="modal-title" data-translate-key="settings_title">Settings</h5> <button class="close-modal" id="closeSettingsModal">&times;</button> </div> <div class="modal-body"> <div class="form-group"> <label class="form-label" for="apiKeyInput" data-translate-key="api_key_label">API Key (Token)</label> <input type="password" class="form-control" id="apiKeyInput" data-translate-key-placeholder="api_key_placeholder" placeholder="在此输入您的 Pollinations.AI API Key"> <p class="api-key-info" data-translate-key="api_key_info"> 用于解锁高级模型。前往 <a href="https://auth.pollinations.ai" target="_blank">auth.pollinations.ai</a> 获取。 </p> </div> <div class="form-group"> <label class="form-label" for="systemPrompt" data-translate-key="system_prompt_label">System Prompt</label> <textarea class="form-control" id="systemPrompt" rows="5" data-translate-key-placeholder="system_prompt_placeholder" placeholder="Enter system prompt..."></textarea> <div class="prompt-examples"> <div class="prompt-example" data-prompt="You are a helpful assistant that provides accurate and concise information." data-translate-key="prompt_general">通用AI助手</div> <div class="prompt-example" data-prompt="You are a creative writer who helps craft engaging stories and content." data-translate-key="prompt_writer">创意写作者</div> <div class="prompt-example" data-prompt="You are a programming expert who provides clear code examples and explanations." data-translate-key="prompt_coder">代码写作助手</div> <div class="prompt-example" data-prompt="You are a language learning tutor who helps with translations and grammar." data-translate-key="prompt_tutor">语言学习导师</div> <div class="prompt-example" data-prompt="You are a data analyst who helps interpret and visualize information." data-translate-key="prompt_analyst">数据分析员</div> <div class="prompt-example" data-prompt="I want you to act as a debater. I will provide you with some topics related to current events and your task is to research both sides of the debates, present valid arguments for each side, refute opposing points of view, and draw persuasive conclusions based on evidence. Your goal is to help people come away from the discussion with increased knowledge and insight into the topic at hand. My first request is 【I want an opinion piece about Deno.】" data-translate-key="prompt_debater">辩手</div> <div class="prompt-example" data-prompt="I want you to act as a poet. You will create poems that evoke emotions and have the power to stir people's soul. Write on any topic or theme but make sure your words convey the feeling you are trying to express in beautiful yet meaningful ways. You can also come up with short verses that are still powerful enough to leave an imprint in readers' minds. My first request is 【I need a poem about love.】" data-translate-key="prompt_poet">诗人</div> <div class="prompt-example" data-prompt="I want you to act as a philosopher. I will provide you with some topics or questions related to the study of philosophy, and it will be your job to explore these concepts in depth. This could involve conducting research into various philosophical theories, proposing new ideas or finding creative solutions for solving complex problems. My first request is 【I need help developing an ethical framework for decision making.】" data-translate-key="prompt_philosopher">哲学家</div> <div class="prompt-example" data-prompt="I want you to act as a mental health adviser. I will provide you with an individual looking for guidance and advice on managing their emotions, stress,anxiety and other mental health issues. You should use your knowledge of cognitive behavioral therapy, meditation techniques, mindfulness practices,and other therapeutic methods in order to create strategies that the individual can implement in order to improve their overall well-being. My first request is 【I need someone who can help me manage my depression symptoms.】" data-translate-key="prompt_counselor">心理健康顾问</div> <div class="prompt-example" data-prompt="Please acknowledge my following request. Please respond to me as a product manager. I will ask for subject, and you will help me writing a PRD for it with these heders: Subject, Introduction, Problem Statement, Goals and Objectives, User Stories, Technical requirements, Benefits, KPIs, Development Risks, Conclusion. Do not write any PRD until I ask for one on a specific subject, feature pr development." data-translate-key="prompt_pm">产品经理</div> <div class="prompt-example" data-prompt="你是一位文本大纲生成专家，擅长根据用户的需求创建一个有条理且易于扩展成完整文章的大纲，你拥有强大的主题分析能力，能准确提取关键信息和核心要点。具备丰富的文案写作知识储备，熟悉各种文体和题材的文案大纲构建方法。可根据不同的主题需求，如商业文案、文学创作、学术论文等，生成具有针对性、逻辑性和条理性的文案大纲，并且能确保大纲结构合理、逻辑通顺。该大纲应该包含以下部分：引言：介绍主题背景，阐述撰写目的并吸引读者兴趣。主体部分：第一段落：详细说明第一个关键点或论据，支持观点并引用相关数据或案例。第二段落：深入探讨第二个重点，继续论证或展开叙述，保持内容的连贯性和深度。第三段落：如果有必要，进一步讨论其他重要方面，或者提供不同的视角和证据。结论：总结所有要点，重申主要观点，并给出有力的结尾陈述，可以是呼吁行动、提出展望或其他形式的收尾。创意性标题：为文章构思一个引人注目的标题，确保它既反映了文章的核心内容又能激发读者的好奇心。" data-translate-key="prompt_outline">文案大纲生成</div> <div class="prompt-example" data-prompt="你是一位大模型提示词生成专家，请根据用户的需求编写一个智能助手的提示词，来指导大模型进行内容生成，要求：1. 以 Markdown 格式输出2. 贴合用户需求，描述智能助手的定位、能力、知识储备3. 提示词应清晰、精确、易于理解，在保持质量的同时，尽可能简洁4. 只输出提示词，不要输出多余解释" data-translate-key="prompt_generator">提示词生成</div> <div class="prompt-example" data-prompt="你是一个中英文翻译专家，将用户输入的中文翻译成英文，或将用户输入的英文翻译成中文。对于非中文内容，它将提供中文翻译结果。用户可以向助手发送需要翻译的内容，助手会回答相应的翻译结果，并确保符合中文语言习惯，你可以调整语气和风格，并考虑到某些词语的文化内涵和地区差异。同时作为翻译家，需将原文翻译成具有信达雅标准的译文。【信】即忠实于原文的内容与意图；【达】意味着译文应通顺易懂，表达清晰；【雅】 则追求译文的文化审美和语言的优美。目标是创作出既忠于原作精神，又符合目标语言文化和读者审美的翻译。" data-translate-key="prompt_translator">中英翻译专家</div> </div> </div> <hr style="margin: 20px 0; border-top: 1px solid var(--border-color);"> <div class="about-section"> <h5 style="color: var(--tech-dark-blue); margin-bottom: 14px;" data-translate-key="about_title">About</h5> <p style="font-size: 14px; color: var(--text-color);" data-translate-key="about_content"> <i class="fas fa-info-circle" style="color: var(--neon-blue);"></i> This project is developed by <a href="https://other.azad.asia" target="_blank" style="color: var(--tech-blue); text-decoration: none;">Azad</a> &nbsp; &nbsp; <i class="fas fa-robot" style="color: var(--neon-blue);"></i> Powered by <a href="https://pollinations.ai" target="_blank" style="color: var(--tech-blue); text-decoration: none;">Pollinations.AI</a> <br><br> <i class="fab fa-github" style="color: var(--neon-blue);"></i>Open Source: <a href="https://github.com/Azad-sl/FreeAI" target="_blank" style="color: var(--tech-blue); text-decoration: none;">Github</a> &nbsp; &nbsp; <i class="fas fa-medal" style="color: var(--neon-blue);"></i> Support the Developer <a href="https://home.azad.asia/dashang" target="_blank" style="color: var(--tech-blue); text-decoration: none;">Buy me a coffee</a> </p> <div class="version-info" id="versionInfo"> </div> </div> </div> <div class="modal-footer"> <button class="btn btn-secondary" id="cancelSettingsBtn" data-translate-key="cancel_btn">Cancel</button> <button class="btn btn-primary" id="saveSettingsBtn" data-translate-key="save_btn">Save</button> </div> </div> </div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const MAX_CONTEXT_MESSAGES = 10; 
+        const translations = {
+            'zh-CN': {
+                title: 'Free AI Chat',
+                sidebar_subtitle: '基于 Pollinations.AI',
+                search_placeholder: '搜索会话...',
+                new_chat_btn: '新建会话',
+                back_home_btn: '返回首页',
+                decrease_font_title: '缩小字体',
+                increase_font_title: '放大字体',
+                clear_chat_title: '清除对话',
+                export_chat_title: '导出对话',
+                message_input_placeholder: '输入消息开始对话...',
+                settings_title: '设置',
+                api_key_label: 'API Key (Token)',
+                api_key_placeholder: '在此输入您的 Pollinations.AI API Key',
+                api_key_info: '用于解锁高级模型。前往 <a href="https://auth.pollinations.ai" target="_blank">auth.pollinations.ai</a> 获取。',
+                about_title: '关于',
+                about_content: '<i class="fas fa-info-circle" style="color: var(--neon-blue);"></i> 本项目由 <a href="https://other.azad.asia" target="_blank" style="color: var(--tech-blue); text-decoration: none;">Azad</a> 开发 &nbsp; &nbsp; <i class="fas fa-robot" style="color: var(--neon-blue);"></i> 基于 <a href="https://pollinations.ai" target="_blank" style="color: var(--tech-blue); text-decoration: none;">Pollinations.AI</a> 提供服务<br><br><i class="fab fa-github" style="color: var(--neon-blue);"></i>项目开源地址 <a href="https://github.com/Azad-sl/FreeAI" target="_blank" style="color: var(--tech-blue); text-decoration: none;">Github</a> &nbsp; &nbsp; <i class="fas fa-medal" style="color: var(--neon-blue);"></i> 给站长 <a href="https://home.azad.asia/dashang" target="_blank" style="color: var(--tech-blue); text-decoration: none;">加个鸡腿</a>',
+                system_prompt_label: '系统提示词',
+                system_prompt_placeholder: '输入系统提示词...',
+                cancel_btn: '取消',
+                save_btn: '保存',
+                prompt_general: '通用AI助手',
+                prompt_writer: '创意写作者',
+                prompt_coder: '代码写作助手',
+                prompt_tutor: '语言学习导师',
+                prompt_analyst: '数据分析员',
+                prompt_debater: '辩手',
+                prompt_poet: '诗人',
+                prompt_philosopher: '哲学家',
+                prompt_counselor: '心理健康顾问',
+                prompt_pm: '产品经理',
+                prompt_outline: '文案大纲生成',
+                prompt_generator: '提示词生成',
+                prompt_translator: '中英翻译专家',
+                new_chat: '新建会话',
+                ai_typing: 'AI正在回复中',
+                no_conversations_found: '未找到会话',
+                clear_all_confirm: '是否删除所有会话？该操作无法撤销。',
+                no_messages_export: '沒有消息可导出',
+                code_preview: '预览代码',
+                hide_preview: '隐藏预览',
+                code_cannot_preview: '此代码类型无法直接预览',
+                js_security_warning: 'JavaScript代码出于安全考虑无法直接预览。',
+                error_api_key_invalid: 'API Key无效或权限不足，请在上方设置处填入API。',
+                error_api_general: 'API请求失败，请稍后重试或检查网络。',
+                input_placeholder_api_needed: '请在"设置"中输入API Key以使用此高级模型',
+                tier_flower_title: '顶级模型 (需要 Flower Tier API Key)',
+                tier_seed_title: '高级模型 (需要 Seed Tier API Key)',
+                error_api_flower_needed: '此模型需要Flower等级API密钥，请升级您的API密钥。',
+                error_api_seed_needed: '此模型需要Seed等级API密钥，请输入有效的API密钥。',
+                error_model_not_found: '所选模型不可用，请尝试其他模型。',
+                error_api_tier_mismatch: '您的API密钥等级不足以使用此模型。请选择适合您API等级的模型。',
+                error_unknown: '发生未知错误，请刷新页面重试。',
+                version_title: '版本信息 (Version 1.1)',
+                version_update_1: '适配官方最新模型，确保服务稳定。',
+                version_update_2: '增加API Key填充功能，解锁高级模型。',
+                version_update_3: '新增中/英文语言一键切换功能。',
+                version_update_4: '多项UI细节优化，提升视觉和交互体验。'
             },
-            {
-                name: "openai-large",
-                type: "chat",
-                censored: true,
-                description: "OpenAI GPT-4o",
-                baseModel: true,
-                vision: true,
-                group: "OpenAI"
-            },
-            {
-                name: "openai-reasoning",
-                type: "chat",
-                censored: true,
-                description: "OpenAI o1-mini",
-                baseModel: true,
-                reasoning: true,
-                group: "OpenAI"
-            },
-            {
-                name: "openai-reasoning",
-                type: "chat",
-                censored: true,
-                description: "OpenAI o3-mini",
-                baseModel: true,
-                reasoning: true,
-                vision: true,
-                group: "OpenAI"
-            },
-            {
-                name: "qwen-coder",
-                type: "chat",
-                censored: true,
-                description: "Qwen 2.5 Coder 32B",
-                baseModel: true,
-                group: "Qwen"
-            },
-            {
-                name: "llama",
-                type: "chat",
-                censored: false,
-                description: "Llama 3.3 70B",
-                baseModel: true,
-                group: "Meta"
-            },
-            {
-                name: "mistral",
-                type: "chat",
-                censored: false,
-                description: "Mistral Nemo",
-                baseModel: true,
-                group: "Mistral"
-            },
-            {
-                name: "deepseek",
-                type: "chat",
-                censored: true,
-                description: "DeepSeek-V3",
-                baseModel: true,
-                group: "DeepSeek"
-            },
-            {
-                name: "claude",
-                type: "chat",
-                censored: true,
-                description: "Claude 3.5 Haiku",
-                baseModel: true,
-                group: "Anthropic"
-            },
-            {
-                name: "deepseek-r1",
-                type: "chat",
-                censored: true,
-                description: "DeepSeek-R1 Distill Qwen 32B",
-                baseModel: true,
-                reasoning: true,
-                provider: "cloudflare",
-                group: "DeepSeek"
-            },
-            {
-                name: "deepseek-reasoner",
-                type: "chat",
-                censored: true,
-                description: "DeepSeek R1 - Full",
-                baseModel: true,
-                reasoning: true,
-                provider: "deepseek",
-                group: "DeepSeek"
-            },
-            {
-                name: "deepseek-r1-llama",
-                type: "chat",
-                censored: true,
-                description: "DeepSeek R1 - Llama 70B",
-                baseModel: true,
-                reasoning: true,
-                provider: "scaleway",
-                group: "DeepSeek"
-            },
-            {
-                name: "llamalight",
-                type: "chat",
-                censored: false,
-                description: "Llama 3.1 8B Instruct",
-                baseModel: true,
-                group: "Meta"
-            },
-            {
-                name: "gemini",
-                type: "chat",
-                censored: true,
-                description: "Gemini 2.0 Flash",
-                baseModel: true,
-                provider: "google",
-                group: "Google"
-            },
-            {
-                name: "gemini-thinking",
-                type: "chat",
-                censored: true,
-                description: "Gemini 2.0 Flash Thinking",
-                baseModel: true,
-                provider: "google",
-                group: "Google"
-            },
-            {
-                name: "phi",
-                type: "chat",
-                censored: true,
-                description: "Phi-4 Multimodal Instruct",
-                baseModel: true,
-                group: "Microsoft"
+            'en': {
+                title: 'Free AI Chat',
+                sidebar_subtitle: 'Powered by Pollinations.AI',
+                search_placeholder: 'Search conversations...',
+                new_chat_btn: 'New Chat',
+                back_home_btn: 'Back to Home',
+                decrease_font_title: 'Decrease Font Size',
+                increase_font_title: 'Increase Font Size',
+                clear_chat_title: 'Clear Chat',
+                export_chat_title: 'Export Chat',
+                message_input_placeholder: 'Type a message to start chatting...',
+                settings_title: 'Settings',
+                api_key_label: 'API Key (Token)',
+                api_key_placeholder: 'Enter your Pollinations.AI API Key here',
+                api_key_info: 'Required to unlock premium models. Get one from <a href="https://auth.pollinations.ai" target="_blank">auth.pollinations.ai</a>.',
+                about_title: 'About',
+                about_content: '<i class="fas fa-info-circle" style="color: var(--neon-blue);"></i> This project is developed by <a href="https://other.azad.asia" target="_blank" style="color: var(--tech-blue); text-decoration: none;">Azad</a> &nbsp; &nbsp; <i class="fas fa-robot" style="color: var(--neon-blue);"></i> Powered by <a href="https://pollinations.ai" target="_blank" style="color: var(--tech-blue); text-decoration: none;">Pollinations.AI</a><br><br><i class="fab fa-github" style="color: var(--neon-blue);"></i>Open Source: <a href="https://github.com/Azad-sl/FreeAI" target="_blank" style="color: var(--tech-blue); text-decoration: none;">Github</a> &nbsp; &nbsp; <i class="fas fa-medal" style="color: var(--neon-blue);"></i> Support the Developer: <a href="https://home.azad.asia/dashang" target="_blank" style="color: var(--tech-blue); text-decoration: none;">Buy me a coffee</a>',
+                system_prompt_label: 'System Prompt',
+                system_prompt_placeholder: 'Enter system prompt...',
+                cancel_btn: 'Cancel',
+                save_btn: 'Save',
+                prompt_general: 'General AI Assistant',
+                prompt_writer: 'Creative Writer',
+                prompt_coder: 'Code Assistant',
+                prompt_tutor: 'Language Tutor',
+                prompt_analyst: 'Data Analyst',
+                prompt_debater: 'Debater',
+                prompt_poet: 'Poet',
+                prompt_philosopher: 'Philosopher',
+                prompt_counselor: 'Mental Health Advisor',
+                prompt_pm: 'Product Manager',
+                prompt_outline: 'Content Outline Generator',
+                prompt_generator: 'Prompt Generator',
+                prompt_translator: 'Translation Expert',
+                new_chat: 'New Chat',
+                ai_typing: 'AI is typing',
+                no_conversations_found: 'No conversations found',
+                clear_all_confirm: 'Delete all conversations? This action cannot be undone.',
+                no_messages_export: 'No messages to export',
+                code_preview: 'Preview Code',
+                hide_preview: 'Hide Preview',
+                code_cannot_preview: 'This code type cannot be previewed directly',
+                js_security_warning: 'JavaScript code cannot be previewed directly for security reasons.',
+                error_api_key_invalid: 'API Key is invalid or has insufficient permissions. Please enter it in the settings above.',
+                error_api_general: 'API request failed. Please try again later or check your connection.',
+                input_placeholder_api_needed: 'Please enter API Key in Settings to use this model',
+                tier_flower_title: 'Top Tier Model (Requires Flower Tier API Key)',
+                tier_seed_title: 'Premium Model (Requires Seed Tier API Key)',
+                error_api_flower_needed: 'This model requires a Flower tier API key. Please upgrade your API key.',
+                error_api_seed_needed: 'This model requires a Seed tier API key. Please enter a valid API key.',
+                error_model_not_found: 'The selected model is not available. Please try a different model.',
+                error_api_tier_mismatch: 'Your API key tier is insufficient for this model. Please select a model suitable for your API tier.',
+                error_unknown: 'An unknown error occurred. Please refresh the page and try again.',
+                version_title: 'Version Info (v1.1)',
+                version_update_1: 'Adapted to the latest official models for stable service.',
+                version_update_2: 'Added API Key support to unlock advanced models.',
+                version_update_3: 'Implemented one-click language switching (CN/EN).',
+                version_update_4: 'Multiple UI/UX enhancements for a better experience.'
             }
-        ];
-        // Generate user avatar SVG
-        function generateUserAvatar() {
-            const colors = ['#FFB900', '#FF8C00', '#F7630C', '#CA5010', '#DA3B01',
-                           '#EF6950', '#D13438', '#FF4343', '#E74856', '#E81123'];
-            const randomColor = colors[Math.floor(Math.random() * colors.length)];
-            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="36" height="36">
-                <rect width="100" height="100" fill="${randomColor}" />
-                <circle cx="50" cy="35" r="18" fill="white" />
-                <path d="M50 60 C25 60 15 80 15 100 L85 100 C85 80 75 60 50 60 Z" fill="white" />
-            </svg>`;
-        }
-        // AI avatar using the provided SVG
-        const aiAvatar = `<svg t="1741846853431" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1507" width="28" height="28"><path d="M512 1023.90001c-23.397715 0-228.977639-14.398594-228.977639-511.950005S488.502295 0 512 0c105.589689 0 228.877649 134.086906 228.877649 511.950005s-123.28796 511.950005-228.877649 511.950005z m0-968.60541c-69.793184 0-173.683039 121.588126-173.683039 456.655405S442.206816 968.505419 512 968.505419c59.994141 0 173.583049-95.490675 173.583049-456.655404S572.094131 55.2946 512 55.2946z" fill="#0099ff" p-id="1508"></path><path d="M218.92862 854.816522c-28.497217 0-52.094913-3.499658-71.393028-8.59916-43.495752-11.698858-77.292452-35.396543-95.290694-66.793478-11.698858-20.497998-101.390099-207.179768 345.266283-467.154379C652.08632 163.983986 799.171956 158.084562 877.5643 179.082511c43.295772 11.598867 76.792501 34.896592 94.190802 65.493605 52.694854 91.991017-5.999414 269.573674-345.166292 467.054389-191.881262 111.689093-321.968558 143.186017-407.66019 143.186017z m585.642809-629.238551c-72.492921 0-192.881164 25.897471-379.262963 134.486866C123.037985 536.047652 65.343619 690.732546 100.240211 751.826579c6.199395 10.698955 22.297822 30.297041 61.593985 40.896007 55.09462 14.598574 184.981935 17.698272 436.857338-128.987404 325.968167-189.781467 355.065326-339.166878 325.068255-391.761742-5.899424-10.199004-21.497901-28.997168-60.494092-39.496143-14.398594-3.799629-33.696709-6.899326-58.694268-6.899326z" fill="#0099ff" p-id="1509"></path><path d="M805.07138 854.816522c-85.691632 0-215.778928-31.496924-407.560199-143.186017C58.344302 514.14979-0.449956 336.567132 52.244898 244.476125c17.498291-30.597012 50.99502-53.894737 94.290792-65.493604 78.692315-21.09794 225.677961-14.898545 480.05312 133.186994 446.656381 260.074602 356.86515 446.656381 345.166292 467.054389-17.998242 31.396934-51.794942 55.19461-95.290694 66.793477-19.298115 5.299482-42.895811 8.799141-71.393028 8.799141zM100.240211 271.97344c-29.997071 52.594864-0.799922 202.080266 325.068255 391.761742 251.875403 146.685675 381.862709 143.685968 436.857338 128.987404 39.296162-10.498975 55.494581-30.097061 61.593985-40.896007C958.656381 690.732546 900.962015 536.047652 598.691534 360.064837 348.116004 214.179084 216.928816 217.578752 160.834294 232.477297c-38.996192 10.498975-54.694659 29.197149-60.594083 39.496143z" fill="#0099ff" p-id="1510"></path></svg>`;
-        // User avatar
+        };
+        const allModels = [ { name: "openai-large", description: "OpenAI GPT-4.1", group: "Top Tier Models", tier: "flower" }, { name: "grok", description: "xAI Grok-3 Mini", group: "Premium Models", tier: "seed" }, { name: "deepseek-reasoning", description: "DeepSeek R1 0528", group: "Premium Models", tier: "seed" }, { name: "mirexa", description: "Mirexa AI Companion", group: "Premium Models", tier: "seed" }, { name: "rtist", description: "Rtist", group: "Premium Models", tier: "seed" }, { name: "sur", description: "Sur AI Assistant", group: "Premium Models", tier: "seed" }, { name: "unity", description: "Unity Unrestricted (Uncensored)", group: "Premium Models", tier: "seed" }, { name: "evil", description: "Evil (Uncensored)", group: "Premium Models", tier: "seed" }, { name: "openai", description: "OpenAI GPT-4.1 Nano", group: "Free Models", tier: "anonymous" }, { name: "llamascout", description: "Llama 4 Scout 17B", group: "Free Models", tier: "anonymous" }, { name: "llama-roblox", description: "Llama 3.1 8B Instruct", group: "Free Models", tier: "anonymous" }, { name: "llama-fast-roblox", description: "Llama 3.2 1B", group: "Free Models", tier: "anonymous" }, { name: "mistral", description: "Mistral Small 3.1 24B", group: "Free Models", tier: "anonymous" }, { name: "mistral-nemo-roblox", description: "Mistral Nemo Instruct 2407", group: "Free Models", tier: "anonymous" }, { name: "qwen", description: "Qwen 3 30B A3B", group: "Free Models", tier: "anonymous" }, { name: "bidara", description: "NASA BIDARA", group: "Free Models", tier: "anonymous" }, { name: "elixposearch", description: "Elixpo Search", group: "Free Models", tier: "anonymous" }, { name: "midijourney", description: "MIDIjourney", group: "Free Models", tier: "anonymous" } ];
+    
+        const elements = { body: document.body, sidebar: document.getElementById('sidebar'), sidebarToggleBtn: document.getElementById('sidebarToggleBtn'), modelDropdown: document.getElementById('modelDropdown'), selectedModel: document.getElementById('selectedModel'), modelMenu: document.getElementById('modelMenu'), chatArea: document.getElementById('chatArea'), messageInput: document.getElementById('messageInput'), sendBtn: document.getElementById('sendBtn'), clearChatBtn: document.getElementById('clearChatBtn'), exportChatBtn: document.getElementById('exportChatBtn'), settingsBtn: document.getElementById('settingsBtn'), settingsModal: document.getElementById('settingsModal'), closeSettingsModal: document.getElementById('closeSettingsModal'), cancelSettingsBtn: document.getElementById('cancelSettingsBtn'), saveSettingsBtn: document.getElementById('saveSettingsBtn'), systemPrompt: document.getElementById('systemPrompt'), apiKeyInput: document.getElementById('apiKeyInput'), newChatBtn: document.getElementById('newChatBtn'), chatList: document.getElementById('chatList'), clearAllBtn: document.getElementById('clearAllBtn'), themeToggle: document.getElementById('themeToggle'), searchInput: document.getElementById('searchInput'), fontSizeIncreaseBtn: document.getElementById('fontSizeIncreaseBtn'), fontSizeDecreaseBtn: document.getElementById('fontSizeDecreaseBtn'), particles: document.getElementById('particles'), languageToggle: document.getElementById('languageToggle'), versionInfo: document.getElementById('versionInfo') };
+    
+        let state = { currentModel: allModels.find(m => m.name === 'openai') || allModels[0], systemPrompt: "", apiKey: "", apiTier: null, conversations: [], currentConversationId: null, chatCounter: 0, pinnedChats: [], isAiTyping: false, currentTheme: 'light', chatFontSize: 14, sidebarHidden: true, currentLanguage: 'zh-CN' };
+        const aiAvatar = `<svg t="1741846853431" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1507" width="28" height="28"><path d="M512 1023.90001c-23.397715 0-228.977639-14.398594-228.977639-511.950005S488.502295 0 512 0c105.589689 0 228.877649 134.086906 228.877649 511.950005s-123.28796 511.950005-228.877649 511.950005z m0-968.60541c-69.793184 0-173.683039 121.588126-173.683039 456.655405S442.206816 968.505419 512 968.505419c59.994141 0 173.583049-95.490675 173.583049-456.655404S572.094131 55.2946 512 55.2946z" fill="#0099ff" p-id="1508"></path><path d="M218.92862 854.816522c-28.497217 0-52.094913-3.499658-71.393028-8.59916-43.495752-11.698858-77.292452-35.396543-95.290694-66.793478-11.698858-20.497998-101.390099-207.179768 345.266283-467.154379C652.08632 163.983986 799.171956 158.084562 877.5643 179.082511c43.295772 11.598867 76.792501 34.896592 94.190802 65.493605 52.694854 91.991017-5.999414 269.573674-345.166292 467.054389-191.881262 111.689093-321.968558 143.186017-407.66019 143.186017z m585.642809-629.238551c-72.492921 0-192.881164 25.897471-379.262963 134.486866C123.037985 536.047652 65.343619 690.732546 100.240211 751.826579c6.199395 10.698955 22.297822 30.297041 61.593985 40.896007 55.094620 14.598574 184.981935 17.698272 436.857338-128.987404 325.968167-189.781467 355.065326-339.166878 325.068255-391.761742-5.899424-10.199004-21.497901-28.997168-60.494092-39.496143-14.398594-3.799629-33.696709-6.899326-58.694268-6.899326z" fill="#0099ff" p-id="1509"></path><path d="M805.07138 854.816522c-85.691632 0-215.778928-31.496924-407.560199-143.186017C58.344302 514.14979-0.449956 336.567132 52.244898 244.476125c17.498291-30.597012 50.99502-53.894737 94.290792-65.493604 78.692315-21.09794 225.677961-14.898545 480.05312 133.186994 446.656381 260.074602 356.86515 446.656381 345.166292 467.054389-17.998242 31.396934-51.794942 55.19461-95.290694 66.793477-19.298115 5.299482-42.895811 8.799141-71.393028 8.799141zM100.240211 271.97344c-29.997071 52.594864-0.799922 202.080266 325.068255 391.761742 251.875403 146.685675 381.862709 143.685968 436.857338 128.987404 39.296162-10.498975 55.494581-30.097061 61.593985-40.896007C958.656381 690.732546 900.962015 536.047652 598.691534 360.064837 348.116004 214.179084 216.928816 217.578752 160.834294 232.477297c-38.996192 10.498975-54.694659 29.197149-60.594083 39.496143z" fill="#0099ff" p-id="1510"></path></svg>`;
         const userAvatar = generateUserAvatar();
-        // Initialize app state
-        let state = {
-            currentModel: allModels[0],
-            systemPrompt: "",
-            conversations: [],
-            currentConversationId: null,
-            chatCounter: 0,
-            pinnedChats: [],
-            isAiTyping: false,
-            currentTheme: 'light',
-            chatFontSize: 14, // Default font size
-            sidebarHidden: true // Default sidebar hidden (for first time users)
-        };
-        // DOM elements
-        const elements = {
-            body: document.body,
-            sidebar: document.getElementById('sidebar'),
-            sidebarToggleBtn: document.getElementById('sidebarToggleBtn'),
-            modelDropdown: document.getElementById('modelDropdown'),
-            selectedModel: document.getElementById('selectedModel'),
-            modelMenu: document.getElementById('modelMenu'),
-            chatArea: document.getElementById('chatArea'),
-            messageInput: document.getElementById('messageInput'),
-            sendBtn: document.getElementById('sendBtn'),
-            clearChatBtn: document.getElementById('clearChatBtn'),
-            exportChatBtn: document.getElementById('exportChatBtn'),
-            settingsBtn: document.getElementById('settingsBtn'),
-            settingsModal: document.getElementById('settingsModal'),
-            closeSettingsModal: document.getElementById('closeSettingsModal'),
-            cancelSettingsBtn: document.getElementById('cancelSettingsBtn'),
-            saveSettingsBtn: document.getElementById('saveSettingsBtn'),
-            systemPrompt: document.getElementById('systemPrompt'),
-            newChatBtn: document.getElementById('newChatBtn'),
-            chatList: document.getElementById('chatList'),
-            clearAllBtn: document.getElementById('clearAllBtn'),
-            themeToggle: document.getElementById('themeToggle'),
-            searchInput: document.getElementById('searchInput'),
-            fontSizeIncreaseBtn: document.getElementById('fontSizeIncreaseBtn'),
-            fontSizeDecreaseBtn: document.getElementById('fontSizeDecreaseBtn'),
-            particles: document.getElementById('particles')
-        };
-        // Create floating particles
-        function createParticles() {
-            for (let i = 0; i < 20; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                particle.style.left = Math.random() * 100 + 'vw';
-                particle.style.top = Math.random() * 100 + 'vh';
-                particle.style.opacity = Math.random() * 0.5;
-                particle.style.width = Math.random() * 4 + 1 + 'px';
-                particle.style.height = particle.style.width;
-                particle.style.animationDuration = Math.random() * 30 + 10 + 's';
-                particle.style.animationDelay = Math.random() * 5 + 's';
-                elements.particles.appendChild(particle);
-            }
-        }
-        // Create particles on load
-        window.addEventListener('load', createParticles);
-        // Helper function to escape HTML entities
-        function escapeHtml(unsafe) {
-            return unsafe
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-        // Format time to display only hours and minutes
-        function formatTime(date) {
-            const hours = date.getHours().toString().padStart(2, '0');
-            const minutes = date.getMinutes().toString().padStart(2, '0');
-            return `${hours}:${minutes}`;
-        }
-        // Initialize the app
-        function init() {
-            loadState();
-            setupTheme();
-            updateFontSize();
-            updateSidebar();
-            populateModelDropdown();
-            setupEventListeners();
-            createNewConversationIfNeeded();
-            renderConversationList();
-            renderCurrentConversation();
-            setupPromptExamples();
-        }
-        // Load state from localStorage if available
-        function loadState() {
-            const savedState = localStorage.getItem('aiChatState');
-            if (savedState) {
-                const parsedState = JSON.parse(savedState);
-                state = {
-                    ...state,
-                    ...parsedState,
-                    currentModel: parsedState.currentModel || allModels[0],
-                    conversations: parsedState.conversations || [],
-                    chatCounter: parsedState.chatCounter || 0,
-                    pinnedChats: parsedState.pinnedChats || [],
-                    isAiTyping: false,
-                    currentTheme: parsedState.currentTheme || 'light',
-                    chatFontSize: parsedState.chatFontSize || 14,
-                    sidebarHidden: parsedState.sidebarHidden !== undefined ? parsedState.sidebarHidden : true
-                };
-            }
-            // Set initial system prompt in modal
-            elements.systemPrompt.value = state.systemPrompt || '';
-        }
-        // Setup theme based on state
-        function setupTheme() {
-            document.documentElement.setAttribute('data-theme', state.currentTheme);
-            updateThemeIcon();
-        }
-        // Update theme toggle icon
-        function updateThemeIcon() {
-            elements.themeToggle.innerHTML = state.currentTheme === 'dark' ?
-                '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-        }
-        // Update the CSS variable for font size
-        function updateFontSize() {
-            document.documentElement.style.setProperty('--chat-font-size', `${state.chatFontSize}px`);
-        }
-        // Increase font size
-        function increaseFontSize() {
-            if (state.chatFontSize < 24) {
-                state.chatFontSize += 2;
-                updateFontSize();
-                saveState();
-            }
-        }
-        // Decrease font size
-        function decreaseFontSize() {
-            if (state.chatFontSize > 10) {
-                state.chatFontSize -= 2;
-                updateFontSize();
-                saveState();
-            }
-        }
-        // Update sidebar visibility
-        function updateSidebar() {
-            if (state.sidebarHidden) {
-                elements.sidebar.classList.add('hidden');
-                elements.body.classList.add('sidebar-hidden');
-                elements.sidebarToggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
-            } else {
-                elements.sidebar.classList.remove('hidden');
-                elements.body.classList.remove('sidebar-hidden');
-                elements.sidebarToggleBtn.innerHTML = '<i class="fas fa-times"></i>';
-            }
-        }
-        // Toggle sidebar
-        function toggleSidebar() {
-            state.sidebarHidden = !state.sidebarHidden;
-            updateSidebar();
-            saveState();
-        }
-        // Toggle between light and dark theme
-        function toggleTheme() {
-            state.currentTheme = state.currentTheme === 'light' ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', state.currentTheme);
-            updateThemeIcon();
-            saveState();
-        }
-        // Setup prompt examples
-        function setupPromptExamples() {
-            const examples = document.querySelectorAll('.prompt-example');
-            examples.forEach(example => {
-                example.addEventListener('click', () => {
-                    elements.systemPrompt.value = example.dataset.prompt;
-                });
-            });
-        }
-        // Save state to localStorage
-        function saveState() {
-            localStorage.setItem('aiChatState', JSON.stringify(state));
-        }
-        // Create a new conversation if none exists
-        function createNewConversationIfNeeded() {
-            if (state.conversations.length === 0 || !state.currentConversationId) {
-                createNewConversation();
-            }
-        }
-        // Populate the model dropdown menu
-        function populateModelDropdown() {
-            // Group models by their group property
-            const groupedModels = {};
-            allModels.forEach(model => {
-                const group = model.group || 'Other';
-                if (!groupedModels[group]) {
-                    groupedModels[group] = [];
-                }
-                groupedModels[group].push(model);
-            });
-            // Clear existing menu items
-            elements.modelMenu.innerHTML = '';
-            // Add grouped items to dropdown
-            for (const group in groupedModels) {
-                // Add group header
-                const groupHeader = document.createElement('div');
-                groupHeader.classList.add('dropdown-group');
-                groupHeader.textContent = group;
-                elements.modelMenu.appendChild(groupHeader);
-                // Add models in this group
-                groupedModels[group].forEach(model => {
-                    const item = document.createElement('div');
-                    item.classList.add('dropdown-item');
-                    item.textContent = model.description;
-                    item.dataset.modelName = model.name;
-                    item.addEventListener('click', () => {
-                        selectModel(model);
-                        toggleModelDropdown();
-                    });
-                    elements.modelMenu.appendChild(item);
-                });
-            }
-            // Set initial selected model
-            elements.selectedModel.textContent = state.currentModel.description;
-        }
-        // Set up event listeners
-        function setupEventListeners() {
-            // Sidebar toggle
-            elements.sidebarToggleBtn.addEventListener('click', toggleSidebar);
-            // Theme toggle
-            elements.themeToggle.addEventListener('click', toggleTheme);
-            // Model dropdown toggle
-            elements.modelDropdown.querySelector('.dropdown-toggle').addEventListener('click', toggleModelDropdown);
-            // Close dropdown when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!elements.modelDropdown.contains(e.target)) {
-                    elements.modelMenu.classList.remove('show');
-                }
-            });
-            // Message input & send
-            elements.messageInput.addEventListener('keydown', handleMessageInputKeydown);
-            elements.sendBtn.addEventListener('click', sendMessage);
-            // Clear chat button
-            elements.clearChatBtn.addEventListener('click', clearCurrentChat);
-            // Export chat button
-            elements.exportChatBtn.addEventListener('click', exportChat);
-            // Settings modal
-            elements.settingsBtn.addEventListener('click', () => elements.settingsModal.classList.add('show'));
-            elements.closeSettingsModal.addEventListener('click', () => elements.settingsModal.classList.remove('show'));
-            elements.cancelSettingsBtn.addEventListener('click', () => elements.settingsModal.classList.remove('show'));
-            elements.saveSettingsBtn.addEventListener('click', saveSettings);
-            // New chat button
-            elements.newChatBtn.addEventListener('click', createNewConversation);
-            // Clear all conversations
-            elements.clearAllBtn.addEventListener('click', clearAllConversations);
-            // Font size controls
-            elements.fontSizeIncreaseBtn.addEventListener('click', increaseFontSize);
-            elements.fontSizeDecreaseBtn.addEventListener('click', decreaseFontSize);
-            // Auto-resize message input
-            elements.messageInput.addEventListener('input', () => {
-                elements.messageInput.style.height = 'auto';
-                elements.messageInput.style.height = `${Math.min(elements.messageInput.scrollHeight, 200)}px`;
-            });
-            // Search input
-            elements.searchInput.addEventListener('input', handleSearchInput);
-        }
-        // Handle search input
-        function handleSearchInput() {
-            const searchTerm = elements.searchInput.value.trim().toLowerCase();
-            if (searchTerm === '') {
-                renderConversationList(); // Show all conversations
-                return;
-            }
-            const filteredConversations = state.conversations.filter(conv => {
-                // Search in title
-                if (conv.title.toLowerCase().includes(searchTerm)) {
-                    return true;
-                }
-                // Search in messages
-                return conv.messages.some(msg =>
-                    msg.content.toLowerCase().includes(searchTerm)
-                );
-            });
-            renderFilteredConversationList(filteredConversations, searchTerm);
-        }
-        // Render filtered conversation list
-        function renderFilteredConversationList(filteredConversations, searchTerm) {
-            elements.chatList.innerHTML = '';
-            // Sort pinned chats first, then unpinned chats
-            const pinnedConversations = filteredConversations.filter(conv =>
-                state.pinnedChats.includes(conv.id)
-            );
-            const unpinnedConversations = filteredConversations.filter(conv =>
-                !state.pinnedChats.includes(conv.id)
-            );
-            const sortedConversations = [...pinnedConversations, ...unpinnedConversations];
-            if (sortedConversations.length === 0) {
-                const noResults = document.createElement('div');
-                noResults.textContent = 'No conversations found';
-                noResults.style.padding = '15px';
-                noResults.style.textAlign = 'center';
-                noResults.style.color = 'var(--light-text)';
-                elements.chatList.appendChild(noResults);
-                return;
-            }
-            sortedConversations.forEach(conversation => {
-                renderChatListItem(conversation);
-            });
-        }
-        // Toggle the model dropdown menu
-        function toggleModelDropdown() {
-            elements.modelMenu.classList.toggle('show');
-        }
-        // Select a model
-        function selectModel(model) {
-            state.currentModel = model;
-            elements.selectedModel.textContent = model.description;
-            saveState();
-        }
-        // Handle message input keydown
-        function handleMessageInputKeydown(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        }
-        // Find current conversation object
-        function getCurrentConversation() {
-            return state.conversations.find(conv => conv.id === state.currentConversationId) || null;
-        }
-        // Add typing indicator
-        function addTypingIndicator() {
-            state.isAiTyping = true;
-            // Create typing indicator element if it doesn't exist
-            if (!document.getElementById('typingIndicator')) {
-                const typingDiv = document.createElement('div');
-                typingDiv.id = 'typingIndicator';
-                typingDiv.classList.add('message', 'message-ai');
-                // Create avatar
-                const avatarDiv = document.createElement('div');
-                avatarDiv.classList.add('message-avatar');
-                avatarDiv.innerHTML = aiAvatar;
-                typingDiv.appendChild(avatarDiv);
-                // Create message bubble with typing indicator
-                const messageBubble = document.createElement('div');
-                messageBubble.classList.add('message-bubble');
-                const typingIndicator = document.createElement('div');
-                typingIndicator.classList.add('typing-indicator');
-                typingIndicator.innerHTML = '<span>AI正在回复中</span><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-                messageBubble.appendChild(typingIndicator);
-                typingDiv.appendChild(messageBubble);
-                elements.chatArea.appendChild(typingDiv);
-                scrollToBottom();
-            }
-        }
-        // Remove typing indicator
-        function removeTypingIndicator() {
-            state.isAiTyping = false;
-            const typingIndicator = document.getElementById('typingIndicator');
-            if (typingIndicator) {
-                typingIndicator.remove();
-            }
-        }
-        // Format conversation history for API
-        function formatConversationHistory(conversation) {
-            // Get previous messages from the conversation
-            const previousMessages = conversation.messages.map(msg => {
-                return {
-                    role: msg.role,
-                    content: msg.content
-                };
-            });
-            return previousMessages;
-        }
-        // Create a structured prompt with conversation history
-        function createStructuredPrompt(userInput, conversation) {
-            let formattedMessages = formatConversationHistory(conversation);
-            // Add current user message
-            formattedMessages.push({
-                role: 'user',
-                content: userInput
-            });
-            // Create prompt format
-            let prompt = '';
-            // Add system prompt if exists
-            if (state.systemPrompt) {
-                prompt += `System: ${state.systemPrompt}\n\n`;
-            }
-            // Add conversation history
-            formattedMessages.forEach(msg => {
-                const role = msg.role === 'user' ? 'User' : 'Assistant';
-                prompt += `${role}: ${msg.content}\n\n`;
-            });
-            return prompt;
-        }
-        // Send a message to the AI
-        async function sendMessage() {
-            const userInput = elements.messageInput.value.trim();
-            if (!userInput || state.isAiTyping) return;
-            // Add user message to the conversation
-            const conversation = getCurrentConversation();
-            if (!conversation) return;
-            // Check if this is the first message and update the conversation title
-            if (conversation.messages.length === 0) {
-                // Use the first message as the conversation title
-                conversation.title = userInput.length > 30 ? userInput.substring(0, 30) + '...' : userInput;
-            }
-            // Add timestamp to the message
-            const timestamp = new Date();
-            // Add user message
-            conversation.messages.push({
-                role: 'user',
-                content: userInput,
-                timestamp: timestamp.toISOString()
-            });
-            // Clear input and resize
-            elements.messageInput.value = '';
-            elements.messageInput.style.height = 'auto';
-            // Render the updated conversation
-            renderCurrentConversation();
-            saveState();
-            // Scroll to bottom
-            scrollToBottom();
-            // Add typing indicator to show AI is responding
-            addTypingIndicator();
-            // Create structured prompt with conversation history
-            const structuredPrompt = createStructuredPrompt(userInput, conversation);
-            // Encode the prompt for URL
-            const encodedPrompt = encodeURIComponent(structuredPrompt);
-            const apiUrl = `https://text.pollinations.ai/${encodedPrompt}?model=${state.currentModel.name}`;
-            try {
-                // Create a placeholder message for the AI's response
-                const aiMessageId = Date.now().toString();
-                // Fetch the response
-                const response = await fetch(apiUrl);
-                // Get the full response
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let aiResponse = '';
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    const chunk = decoder.decode(value, { stream: true });
-                    aiResponse += chunk;
-                }
-                // Remove typing indicator and add the full response
-                removeTypingIndicator();
-                // Add the full response
-                const responseTimestamp = new Date();
-                conversation.messages.push({
-                    id: aiMessageId,
-                    role: 'assistant',
-                    content: aiResponse,
-                    model: state.currentModel.description,
-                    timestamp: responseTimestamp.toISOString()
-                });
-                renderCurrentConversation();
-                scrollToBottom();
-                saveState();
-            } catch (error) {
-                console.error('Error fetching AI response:', error);
-                // Remove typing indicator if present
-                removeTypingIndicator();
-                // Add error message
-                const errorTimestamp = new Date();
-                conversation.messages.push({
-                    role: 'system',
-                    content: `Error: Failed to get response from AI. 对话过长导致令牌限制，请新建会话或切换模型重试 ${error.message}`,
-                    model: state.currentModel.description,
-                    timestamp: errorTimestamp.toISOString()
-                });
-                renderCurrentConversation();
-                saveState();
-                scrollToBottom();
-            }
-        }
-        // Detect the type of code for proper preview rendering
-        function detectCodeType(code) {
-            if (code.indexOf('<html') >= 0 || (code.indexOf('<') === 0 && code.indexOf('</') > 0)) {
-                return 'html';
-            } else if (code.indexOf('function') >= 0 || code.indexOf('var ') >= 0 || code.indexOf('const ') >= 0 || code.indexOf('let ') >= 0) {
-                return 'javascript';
-            } else if (code.indexOf('def ') >= 0 || code.indexOf('import ') >= 0 || code.indexOf('print(') >= 0) {
-                return 'python';
-            } else if (code.indexOf('<?php') >= 0) {
-                return 'php';
-            } else if (code.indexOf('.class') >= 0 || code.indexOf('public static void main') >= 0) {
-                return 'java';
-            } else if (code.indexOf('#include') >= 0) {
-                return 'c';
-            } else {
-                return 'text';
-            }
-        }
-        // Create a preview for code
-        function createCodePreview(code, type) {
-            switch (type) {
-                case 'html':
-                    return `<iframe sandbox="allow-scripts" srcdoc="${escapeHtml(code)}"></iframe>`;
-                case 'javascript':
-                    return `<div>JavaScript code cannot be previewed directly for security reasons.</div>`;
-                default:
-                    return `<div>This code type (${type}) cannot be previewed directly.</div>`;
-            }
-        }
-        // Add code preview functionality
-        function setupCodePreviewButtons() {
-            const previewButtons = document.querySelectorAll('.code-preview-btn');
-            previewButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const codePreview = this.nextElementSibling;
-                    codePreview.classList.toggle('show');
-                    this.textContent = codePreview.classList.contains('show') ? 'Hide Preview' : 'Preview Code';
-                });
-            });
-        }
-        // Render the current conversation
-        function renderCurrentConversation() {
-            const conversation = getCurrentConversation();
-            if (!conversation) return;
-            // Preserve typing indicator if it exists
-            const typingIndicator = document.getElementById('typingIndicator');
-            const hasTypingIndicator = typingIndicator !== null;
-            elements.chatArea.innerHTML = '';
-            // Keep track of last displayed timestamp
-            let lastTimestamp = null;
-            conversation.messages.forEach((message, index) => {
-                // Add timestamp above message if needed
-                if (message.timestamp) {
-                    const messageDate = new Date(message.timestamp);
-                    const timeStr = formatTime(messageDate);
-                    // Only add timestamp if it's different from the last one displayed
-                    if (!lastTimestamp || timeStr !== lastTimestamp) {
-                        const timeDiv = document.createElement('div');
-                        timeDiv.style.textAlign = 'center';
-                        timeDiv.style.margin = '10px 0';
-                        const timeSpan = document.createElement('span');
-                        timeSpan.classList.add('message-time');
-                        timeSpan.textContent = timeStr;
-                        timeDiv.appendChild(timeSpan);
-                        elements.chatArea.appendChild(timeDiv);
-                        lastTimestamp = timeStr;
-                    }
-                }
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message', `message-${message.role === 'user' ? 'user' : 'ai'}`);
-                // Create avatar
-                const avatarDiv = document.createElement('div');
-                avatarDiv.classList.add('message-avatar');
-                avatarDiv.innerHTML = message.role === 'user' ? userAvatar : aiAvatar;
-                messageDiv.appendChild(avatarDiv);
-                // Create message bubble
-                const messageBubble = document.createElement('div');
-                messageBubble.classList.add('message-bubble');
-                const messageText = document.createElement('div');
-                messageText.classList.add('message-text');
-                // Format the message content with markdown-like formatting
-                let formattedContent = message.content;
-                // Extract code blocks and replace with placeholders
-                const codeBlocks = [];
-                formattedContent = formattedContent.replace(/```([^`]*?)```/gs, (match, codeContent) => {
-                    const id = `code-block-${codeBlocks.length}`;
-                    codeBlocks.push({ id, content: codeContent.trim() });
-                    return `[${id}]`;
-                });
-                // Handle inline code
-                formattedContent = formattedContent.replace(/`([^`]+)`/g, (match, code) => {
-                    return `<code>${escapeHtml(code)}</code>`;
-                });
-                // Restore code blocks with proper formatting
-                for (const block of codeBlocks) {
-                   const codeType = detectCodeType(block.content);
-                    const previewContent = createCodePreview(block.content, codeType);
-                    formattedContent = formattedContent.replace(
-                        `[${block.id}]`,
-                        `<pre>${escapeHtml(block.content)}</pre><button class="code-preview-btn">Preview Code</button><div class="code-preview">${previewContent}</div>`
-                    );
-                }
-                messageText.innerHTML = formattedContent;
-                messageBubble.appendChild(messageText);
-                // Add message actions (copy button and model info)
-                if (message.role === 'assistant') {
-                    const messageActions = document.createElement('div');
-                    messageActions.classList.add('message-actions');
-                    const copyBtn = document.createElement('div');
-                    copyBtn.classList.add('message-copy');
-                    copyBtn.innerHTML = '<i class="fas fa-copy"></i> ';
-                    copyBtn.addEventListener('click', () => {
-                        navigator.clipboard.writeText(message.content)
-                            .then(() => {
-                                copyBtn.innerHTML = '<i class="fas fa-check"></i> ';
-                                setTimeout(() => {
-                                    copyBtn.innerHTML = '<i class="fas fa-copy"></i> ';
-                                }, 2000);
-                            })
-                            .catch(err => console.error('Could not copy text: ', err));
-                    });
-                    messageActions.appendChild(copyBtn);
-                    // Add model info for AI messages
-                    if (message.model) {
-                        const modelInfo = document.createElement('div');
-                        modelInfo.classList.add('message-model');
-                        modelInfo.textContent = message.model;
-                        messageActions.appendChild(modelInfo);
-                    }
-                    messageBubble.appendChild(messageActions);
-                }
-                messageDiv.appendChild(messageBubble);
-                elements.chatArea.appendChild(messageDiv);
-            });
-            // Setup code preview buttons
-            setupCodePreviewButtons();
-            // Re-add typing indicator if it was there before
-            if (hasTypingIndicator) {
-                addTypingIndicator();
-            }
-            // Update conversation title in sidebar
-            renderConversationList();
-        }
-        // Scroll chat area to bottom
-        function scrollToBottom() {
-            elements.chatArea.scrollTop = elements.chatArea.scrollHeight;
-        }
-        // Clear current chat
-        function clearCurrentChat() {
-            const conversation = getCurrentConversation();
-            if (conversation) {
-                conversation.messages = [];
-                renderCurrentConversation();
-                saveState();
-            }
-        }
-        // Export chat as markdown
-        function exportChat() {
-            const conversation = getCurrentConversation();
-            if (!conversation || conversation.messages.length === 0) {
-                alert('No messages to export');
-                return;
-            }
-            let markdown = `# ${conversation.title}\n\n`;
-            conversation.messages.forEach(message => {
-                const role = message.role === 'user' ? 'User' : 'AI';
-                const model = message.model ? `(${message.model})` : '';
-                const time = message.timestamp ? `[${new Date(message.timestamp).toLocaleTimeString()}]` : '';
-                markdown += `## ${time}${role}${model}\n\n${message.content}\n\n`;
-            });
-            // Create and trigger download
-            const blob = new Blob([markdown], { type: 'text/markdown' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `chat-${conversation.id}.md`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-        // Save settings
-        function saveSettings() {
-            state.systemPrompt = elements.systemPrompt.value;
-            saveState();
-            elements.settingsModal.classList.remove('show');
-        }
-        // Create a new conversation
-        function createNewConversation() {
-            state.chatCounter++;
-            const newId = Date.now().toString();
-            const newConversation = {
-                id: newId,
-                title: `New Chat`, // Default title, will be updated with first message
-                messages: []
-            };
-            state.conversations.push(newConversation);
-            state.currentConversationId = newId;
-            renderConversationList();
-            renderCurrentConversation();
-            saveState();
-            // Hide sidebar after creating a new chat on mobile
-            if (window.innerWidth <= 768) {
-                state.sidebarHidden = true;
-                updateSidebar();
-            }
-        }
-        // Toggle pin status for a conversation
-        function togglePinChat(id) {
-            if (state.pinnedChats.includes(id)) {
-                state.pinnedChats = state.pinnedChats.filter(pinnedId => pinnedId !== id);
-            } else {
-                state.pinnedChats.push(id);
-            }
-            saveState();
-            renderConversationList();
-        }
-        // Render a chat list item
-        function renderChatListItem(conversation) {
-            const chatItem = document.createElement('div');
-            chatItem.classList.add('chat-item');
-            if (conversation.id === state.currentConversationId) {
-                chatItem.classList.add('active');
-            }
-            const chatIcon = document.createElement('div');
-            chatIcon.classList.add('chat-item-icon');
-            chatIcon.innerHTML = aiAvatar;
-            const chatTitle = document.createElement('div');
-            chatTitle.classList.add('chat-item-title');
-            chatTitle.textContent = conversation.title;
-            const chatItemActions = document.createElement('div');
-            chatItemActions.classList.add('chat-item-actions');
-            const pinBtn = document.createElement('div');
-            pinBtn.classList.add('chat-item-pin');
-            if (state.pinnedChats.includes(conversation.id)) {
-                pinBtn.classList.add('pinned');
-            }
-            pinBtn.innerHTML = '<i class="fas fa-thumbtack"></i>';
-            pinBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                togglePinChat(conversation.id);
-            });
-            const deleteBtn = document.createElement('div');
-            deleteBtn.classList.add('chat-item-delete');
-            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
-            deleteBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                deleteConversation(conversation.id);
-            });
-            chatItemActions.appendChild(pinBtn);
-            chatItemActions.appendChild(deleteBtn);
-            chatItem.appendChild(chatIcon);
-            chatItem.appendChild(chatTitle);
-            chatItem.appendChild(chatItemActions);
-            chatItem.addEventListener('click', () => {
-                state.currentConversationId = conversation.id;
-                renderConversationList();
-                renderCurrentConversation();
-                saveState();
-                // Hide sidebar after selecting a chat on mobile
-                if (window.innerWidth <= 768) {
-                    state.sidebarHidden = true;
-                    updateSidebar();
-                }
-            });
-            elements.chatList.appendChild(chatItem);
-        }
-        // Render the conversation list in the sidebar
-        function renderConversationList() {
-            elements.chatList.innerHTML = '';
-            // Get pinned conversations
-            const pinnedConversations = state.conversations.filter(conv =>
-                state.pinnedChats.includes(conv.id)
-            );
-            // Get unpinned conversations
-            const unpinnedConversations = state.conversations.filter(conv =>
-                !state.pinnedChats.includes(conv.id)
-            );
-            // Sort pinned chats first, then unpinned chats
-            const sortedConversations = [...pinnedConversations, ...unpinnedConversations];
-            sortedConversations.forEach(conversation => {
-                renderChatListItem(conversation);
-            });
-        }
-        // Delete a conversation
-        function deleteConversation(id) {
-            // Remove from pinned chats if it's pinned
-            if (state.pinnedChats.includes(id)) {
-                state.pinnedChats = state.pinnedChats.filter(pinnedId => pinnedId !== id);
-            }
-            // Filter out the conversation to delete
-            state.conversations = state.conversations.filter(conv => conv.id !== id);
-            // If we deleted the current conversation, select another one
-            if (state.currentConversationId === id) {
-                state.currentConversationId = state.conversations.length > 0 ? state.conversations[0].id : null;
-                // If no conversations left, create a new one
-                if (state.currentConversationId === null) {
-                    createNewConversation();
-                    return;
-                }
-            }
-            renderConversationList();
-            renderCurrentConversation();
-            saveState();
-        }
-        // Clear all conversations
-        function clearAllConversations() {
-            if (confirm('是否删除所有会话？该操作无法撤销。')) {
-                state.conversations = [];
-                state.currentConversationId = null;
-                state.chatCounter = 0;
-                state.pinnedChats = [];
-                createNewConversation();
-                saveState();
-            }
-        }
-        // Initialize the app when the DOM is loaded
-        document.addEventListener('DOMContentLoaded', init);
-    </script>
+        function generateUserAvatar() { const colors = ['#FFB900', '#FF8C00', '#F7630C', '#CA5010', '#DA3B01', '#EF6950', '#D13438', '#FF4343', '#E74856', '#E81123']; const randomColor = colors[Math.floor(Math.random() * colors.length)]; const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"> <rect width="100" height="100" fill="${randomColor}" /> <circle cx="50" cy="35" r="18" fill="white" /> <path d="M50 60 C25 60 15 80 15 100 L85 100 C85 80 75 60 50 60 Z" fill="white" /> </svg>`; return `data:image/svg+xml;base64,${btoa(svg)}`; }
+        function renderVersionInfo(lang) { elements.versionInfo.innerHTML = ` <div class="version-title"> <i class="fas fa-info-circle"></i> <span data-translate-key="version_title">${translations[lang]['version_title']}</span> </div> <ul> <li><i class="fas fa-microchip"></i><span data-translate-key="version_update_1">${translations[lang]['version_update_1']}</span></li> <li><i class="fas fa-key"></i><span data-translate-key="version_update_2">${translations[lang]['version_update_2']}</span></li> <li><i class="fas fa-language"></i><span data-translate-key="version_update_3">${translations[lang]['version_update_3']}</span></li> <li><i class="fas fa-magic"></i><span data-translate-key="version_update_4">${translations[lang]['version_update_4']}</span></li> </ul> `; }
+        function switchLanguage(lang) { document.documentElement.lang = lang === 'zh-CN' ? 'zh-CN' : 'en'; document.title = translations[lang]['title']; const languageText = document.getElementById('languageText'); const languageToggle = elements.languageToggle; if (lang === 'en') { languageText.textContent = 'EN'; languageToggle.classList.add('active'); } else { languageText.textContent = 'CN'; languageToggle.classList.remove('active'); } document.querySelectorAll('[data-translate-key], [data-translate-key-placeholder]').forEach(el => { const key = el.dataset.translateKey || el.dataset.translateKeyPlaceholder; const value = translations[lang][key]; if (el.id === 'versionInfo' || (el.parentElement && el.parentElement.id === 'versionInfo')) return; if (value) { if (el.hasAttribute('data-translate-key-placeholder')) { el.placeholder = value; } else if (el.hasAttribute('title')) { el.title = value; } else { el.innerHTML = value; } } }); localStorage.setItem('userLanguage', lang); state.currentLanguage = lang; populateModelDropdown(); updateInputAreaState(); renderCurrentConversation(); renderVersionInfo(lang); }
+        function createParticles() { if (elements.particles.children.length > 0) return; for (let i = 0; i < 20; i++) { const particle = document.createElement('div'); particle.classList.add('particle'); particle.style.left = Math.random() * 100 + 'vw'; particle.style.top = Math.random() * 100 + 'vh'; particle.style.opacity = Math.random() * 0.5; particle.style.width = Math.random() * 4 + 1 + 'px'; particle.style.height = particle.style.width; particle.style.animationDuration = Math.random() * 30 + 10 + 's'; particle.style.animationDelay = Math.random() * 5 + 's'; elements.particles.appendChild(particle); } }
+        function escapeHtml(unsafe) { if (typeof unsafe !== 'string') return ''; return unsafe .replace(/&/g, "&amp;") .replace(/</g, "&lt;") .replace(/>/g, "&gt;") .replace(/"/g, "&quot;") .replace(/'/g, "&#039;"); }
+        function formatTime(date) { const hours = date.getHours().toString().padStart(2, '0'); const minutes = date.getMinutes().toString().padStart(2, '0'); return `${hours}:${minutes}`; }
+        function loadState() { const savedState = localStorage.getItem('aiChatState'); if (savedState) { try { const parsedState = JSON.parse(savedState); const defaultModel = allModels.find(m => m.name === 'openai') || allModels[0]; state = { ...state, ...parsedState, currentModel: allModels.find(m => m.name === parsedState.currentModel?.name) || defaultModel, isAiTyping: false, }; } catch (e) { console.error('Error loading state:', e); localStorage.removeItem('aiChatState'); } } elements.systemPrompt.value = state.systemPrompt || ''; elements.apiKeyInput.value = state.apiKey || ''; elements.selectedModel.textContent = state.currentModel.description; }
+        function saveState() { localStorage.setItem('aiChatState', JSON.stringify(state)); }
+        function init() { loadState(); setupTheme(); updateFontSize(); updateSidebar(); populateModelDropdown(); setupEventListeners(); createNewConversationIfNeeded(); renderConversationList(); renderCurrentConversation(); setupPromptExamples(); initializeLanguage(); updateInputAreaState(); createParticles(); }
+        function initializeLanguage() { switchLanguage(state.currentLanguage); }
+        function setupTheme() { document.documentElement.setAttribute('data-theme', state.currentTheme); updateThemeIcon(); }
+        function updateThemeIcon() { elements.themeToggle.innerHTML = state.currentTheme === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>'; }
+        function updateFontSize() { document.documentElement.style.setProperty('--chat-font-size', `${state.chatFontSize}px`); }
+        function increaseFontSize() { if (state.chatFontSize < 24) { state.chatFontSize += 2; updateFontSize(); saveState(); } }
+        function decreaseFontSize() { if (state.chatFontSize > 10) { state.chatFontSize -= 2; updateFontSize(); saveState(); } }
+        function updateSidebar() { elements.body.classList.toggle('sidebar-hidden', state.sidebarHidden); elements.sidebar.classList.toggle('hidden', state.sidebarHidden); elements.sidebarToggleBtn.innerHTML = state.sidebarHidden ? '<i class="fas fa-bars"></i>' : '<i class="fas fa-times"></i>'; }
+        function toggleSidebar() { state.sidebarHidden = !state.sidebarHidden; updateSidebar(); saveState(); }
+        function toggleTheme() { state.currentTheme = state.currentTheme === 'light' ? 'dark' : 'light'; setupTheme(); saveState(); }
+        function setupPromptExamples() { document.querySelectorAll('.prompt-example').forEach(example => { example.addEventListener('click', () => { elements.systemPrompt.value = example.dataset.prompt; }); }); }
+        function createNewConversationIfNeeded() { if (!state.currentConversationId || !state.conversations.find(c => c.id === state.currentConversationId)) { if (state.conversations.length > 0) { state.currentConversationId = state.conversations[state.conversations.length - 1].id; } else { createNewConversation(); } } }
+        function populateModelDropdown() { elements.modelMenu.innerHTML = ''; const groupedModels = allModels.reduce((acc, model) => { (acc[model.group] = acc[model.group] || []).push(model); return acc; }, {}); const groupOrder = ["Top Tier Models", "Premium Models", "Free Models"]; groupOrder.forEach(groupName => { if (groupedModels[groupName]) { const groupHeader = document.createElement('div'); groupHeader.className = 'dropdown-group'; groupHeader.textContent = groupName; elements.modelMenu.appendChild(groupHeader); groupedModels[groupName].forEach(model => { const item = document.createElement('div'); item.className = 'dropdown-item'; item.dataset.modelName = model.name; item.innerHTML = `<span>${model.description}</span>` + (model.tier !== 'anonymous' ? `<span class="tier-label ${model.tier}" title="${translations[state.currentLanguage][`tier_${model.tier}_title`]}">${model.tier.charAt(0).toUpperCase() + model.tier.slice(1)}</span>` : ''); item.addEventListener('click', () => { selectModel(model); toggleModelDropdown(); }); elements.modelMenu.appendChild(item); }); } }); }
+        function setupEventListeners() { elements.sidebarToggleBtn.addEventListener('click', toggleSidebar); elements.themeToggle.addEventListener('click', toggleTheme); elements.languageToggle.addEventListener('click', () => switchLanguage(state.currentLanguage === 'zh-CN' ? 'en' : 'zh-CN')); elements.modelDropdown.querySelector('.dropdown-toggle').addEventListener('click', toggleModelDropdown); document.addEventListener('click', (e) => { if (!elements.modelDropdown.contains(e.target)) elements.modelMenu.classList.remove('show'); }); elements.messageInput.addEventListener('keydown', handleMessageInputKeydown); elements.sendBtn.addEventListener('click', sendMessage); elements.clearChatBtn.addEventListener('click', clearCurrentChat); elements.exportChatBtn.addEventListener('click', exportChat); elements.settingsBtn.addEventListener('click', () => elements.settingsModal.classList.add('show')); elements.closeSettingsModal.addEventListener('click', () => elements.settingsModal.classList.remove('show')); elements.cancelSettingsBtn.addEventListener('click', () => elements.settingsModal.classList.remove('show')); elements.saveSettingsBtn.addEventListener('click', saveSettings); elements.newChatBtn.addEventListener('click', createNewConversation); elements.clearAllBtn.addEventListener('click', clearAllConversations); elements.fontSizeIncreaseBtn.addEventListener('click', increaseFontSize); elements.fontSizeDecreaseBtn.addEventListener('click', decreaseFontSize); elements.messageInput.addEventListener('input', () => { elements.messageInput.style.height = 'auto'; elements.messageInput.style.height = `${Math.min(elements.messageInput.scrollHeight, 200)}px`; }); elements.searchInput.addEventListener('input', handleSearchInput); }
+        function handleSearchInput() { const searchTerm = elements.searchInput.value.trim().toLowerCase(); const list = searchTerm ? state.conversations.filter(conv => conv.title.toLowerCase().includes(searchTerm) || (conv.messages || []).some(msg => msg.content.toLowerCase().includes(searchTerm)) ) : state.conversations; renderConversationList(list); }
+        function toggleModelDropdown() { elements.modelMenu.classList.toggle('show'); }
+        function updateInputAreaState() { const isPremium = state.currentModel.tier !== 'anonymous'; const hasApiKey = !!state.apiKey; let isAllowed = true; let placeholderKey = 'message_input_placeholder'; if (isPremium) { if (!hasApiKey) { isAllowed = false; placeholderKey = 'input_placeholder_api_needed'; } else if (state.currentModel.tier === 'flower' && state.apiTier !== 'flower') { isAllowed = false; placeholderKey = 'error_api_flower_needed'; } else if (state.currentModel.tier === 'seed' && !['flower', 'seed'].includes(state.apiTier)) { isAllowed = false; placeholderKey = 'error_api_seed_needed'; } } elements.messageInput.disabled = !isAllowed || state.isAiTyping; elements.sendBtn.disabled = !isAllowed || state.isAiTyping; elements.messageInput.placeholder = translations[state.currentLanguage][placeholderKey]; }
+        async function validateApiKeyTier(apiKey) { if (!apiKey) return null; try { const flowerModel = allModels.find(m => m.tier === 'flower'); if (flowerModel) { const fResponse = await fetch(`https://text.pollinations.ai/test?model=${flowerModel.name}`, { headers: { 'Authorization': `Bearer ${apiKey}` } }); if (fResponse.ok) return 'flower'; } const seedModel = allModels.find(m => m.tier === 'seed'); if (seedModel) { const sResponse = await fetch(`https://text.pollinations.ai/test?model=${seedModel.name}`, { headers: { 'Authorization': `Bearer ${apiKey}` } }); if (sResponse.ok) return 'seed'; } return null; } catch (error) { console.error('Error validating API key tier:', error); return null; } }
+        function selectModel(model) { if (model.tier === 'flower' && state.apiTier !== 'flower') { alert(translations[state.currentLanguage]['error_api_flower_needed']); return; } if (model.tier === 'seed' && !['flower', 'seed'].includes(state.apiTier)) { alert(translations[state.currentLanguage]['error_api_seed_needed']); return; } state.currentModel = model; elements.selectedModel.textContent = model.description; saveState(); updateInputAreaState(); }
+        function handleMessageInputKeydown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+        function getCurrentConversation() { return state.conversations.find(conv => conv.id === state.currentConversationId); }
+        function addSystemMessage(content, conversation) { if (!conversation) return; const lastMessage = conversation.messages[conversation.messages.length - 1]; if (lastMessage && lastMessage.role === 'system' && lastMessage.content === content) return; conversation.messages.push({ role: 'system', content, timestamp: new Date().toISOString() }); renderCurrentConversation(); saveState(); }
+        function addTypingIndicator() { if (document.getElementById('typingIndicator')) return; state.isAiTyping = true; const typingDiv = document.createElement('div'); typingDiv.id = 'typingIndicator'; typingDiv.className = 'message message-ai'; typingDiv.innerHTML = ` <div class="message-avatar">${aiAvatar}</div> <div class="message-bubble"> <div class="typing-indicator"> <span>${translations[state.currentLanguage]['ai_typing']}</span> <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> </div> </div>`; elements.chatArea.appendChild(typingDiv); scrollToBottom(); updateInputAreaState(); }
+        function removeTypingIndicator() { state.isAiTyping = false; const typingIndicator = document.getElementById('typingIndicator'); if (typingIndicator) typingIndicator.remove(); updateInputAreaState(); }
+        function createStructuredPrompt(userInput, conversation) { let history = (conversation.messages || []) .filter(msg => msg.role !== 'system') .map(msg => ({ role: msg.role, content: msg.content })); if (history.length > MAX_CONTEXT_MESSAGES) { history = history.slice(-MAX_CONTEXT_MESSAGES); } let prompt = state.systemPrompt ? `System: ${state.systemPrompt}\n\n` : ''; history.forEach(msg => { prompt += `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}\n\n`; }); prompt += `User: ${userInput}\n\nAssistant:`; return prompt; }
+        async function sendMessage() { const userInput = elements.messageInput.value.trim(); if (!userInput || state.isAiTyping) return; let conversation = getCurrentConversation(); if (!conversation) return; if (conversation.messages.length === 0) { conversation.title = userInput.substring(0, 30) + (userInput.length > 30 ? '...' : ''); } conversation.messages.push({ role: 'user', content: userInput, timestamp: new Date().toISOString() }); elements.messageInput.value = ''; elements.messageInput.style.height = 'auto'; addTypingIndicator(); renderCurrentConversation(); saveState(); try { const structuredPrompt = createStructuredPrompt(userInput, conversation); const encodedPrompt = encodeURIComponent(structuredPrompt); const apiUrl = `https://text.pollinations.ai/${encodedPrompt}?model=${state.currentModel.name}`; const headers = { 'Content-Type': 'application/json' }; if (state.apiKey) headers['Authorization'] = `Bearer ${state.apiKey}`; const response = await fetch(apiUrl, { headers }); if (!response.ok) { let errorMsgKey = 'error_api_general'; if (response.status === 402) { try { const errData = await response.json(); errorMsgKey = errData.required_tier ? 'error_api_tier_mismatch' : 'error_api_key_invalid'; } catch { errorMsgKey = 'error_api_key_invalid'; } } else if (response.status === 404) { errorMsgKey = 'error_model_not_found'; } else if (response.status === 414) { errorMsgKey = 'error_api_general'; } throw new Error(translations[state.currentLanguage][errorMsgKey]); } const reader = response.body.getReader(); const decoder = new TextDecoder(); let aiResponse = ''; while (true) { const { done, value } = await reader.read(); if (done) break; aiResponse += decoder.decode(value, { stream: true }); } if (aiResponse.trim()) { conversation.messages.push({ role: 'assistant', content: aiResponse.trim(), model: state.currentModel.description, timestamp: new Date().toISOString() }); } else { throw new Error(translations[state.currentLanguage]['error_api_general']); } } catch (error) { console.error('Error fetching AI response:', error); addSystemMessage(error.message || translations[state.currentLanguage]['error_unknown'], conversation); } finally { removeTypingIndicator(); renderCurrentConversation(); saveState(); } }
+        function detectCodeType(code) { if (/^\s*<!DOCTYPE html/i.test(code) || /^\s*<html/i.test(code) || (/^\s*<[^>]+>/.test(code) && /<\/[^>]+>\s*$/.test(code))) { return 'html'; } if (/\b(function|var|let|const|import|export|=>)\b/i.test(code)) return 'javascript'; if (/\b(def|import|class|print)\b/i.test(code) && !code.includes('public class')) return 'python'; return 'text'; }
+        function createCodePreview(code, type) { if (type === 'html') { return `<iframe sandbox="allow-scripts" srcdoc="${escapeHtml(code)}"></iframe>`; } if (type === 'javascript') { return `<div>${translations[state.currentLanguage]['js_security_warning']}</div>`; } return `<div>${translations[state.currentLanguage]['code_cannot_preview']} (${type})</div>`; }
+        function handleCodePreviewClick(event) { const previewDiv = event.currentTarget.nextElementSibling; if (previewDiv && previewDiv.classList.contains('code-preview')) { previewDiv.classList.toggle('show'); event.currentTarget.textContent = previewDiv.classList.contains('show') ? translations[state.currentLanguage]['hide_preview'] : translations[state.currentLanguage]['code_preview']; } }
+        function setupCodePreviewButtons() { document.querySelectorAll('.code-preview-btn').forEach(button => { button.removeEventListener('click', handleCodePreviewClick); button.addEventListener('click', handleCodePreviewClick); }); }
+        function renderCurrentConversation() { try { const conversation = getCurrentConversation(); elements.chatArea.innerHTML = ''; if (!conversation) return; let lastTimestamp = null; conversation.messages.forEach(message => { const messageDate = new Date(message.timestamp); const timeStr = formatTime(messageDate); if (!lastTimestamp || timeStr !== lastTimestamp) { const timeDiv = document.createElement('div'); timeDiv.style.textAlign = 'center'; timeDiv.innerHTML = `<span class="message-time">${timeStr}</span>`; elements.chatArea.appendChild(timeDiv); lastTimestamp = timeStr; } const messageDiv = document.createElement('div'); const roleClass = message.role === 'system' ? 'ai message-system' : message.role; messageDiv.className = `message message-${roleClass}`; const avatar = message.role === 'user' ? `<img src="${userAvatar}" alt="User">` : aiAvatar; const messageBubble = document.createElement('div'); messageBubble.className = 'message-bubble'; const messageTextDiv = document.createElement('div'); messageTextDiv.className = 'message-text'; const rawHtml = marked.parse(message.content, { breaks: true, gfm: true }); const sanitizedHtml = DOMPurify.sanitize(rawHtml); messageTextDiv.innerHTML = sanitizedHtml; messageTextDiv.querySelectorAll('pre').forEach(preElement => { const code = preElement.textContent; const codeType = detectCodeType(code); if(codeType === 'html' || codeType === 'javascript') { const previewContent = createCodePreview(code, codeType); const previewButton = document.createElement('button'); previewButton.className = 'code-preview-btn'; previewButton.textContent = translations[state.currentLanguage]['code_preview']
+                             const previewContainer = document.createElement('div'); previewContainer.className = 'code-preview'; previewContainer.innerHTML = previewContent; preElement.insertAdjacentElement('afterend', previewContainer); preElement.insertAdjacentElement('afterend', previewButton); } }); messageBubble.appendChild(messageTextDiv); const actionsDiv = document.createElement('div'); actionsDiv.className = 'message-actions'; if (message.role === 'user' || message.role === 'assistant') { let actionsContent = `<span class="message-copy" title="Copy"><i class="fas fa-copy"></i></span>`; if (message.role === 'assistant' && message.model) { actionsContent += `<span class="message-model">${message.model}</span>`; } actionsDiv.innerHTML = actionsContent; actionsDiv.querySelector('.message-copy').addEventListener('click', () => { navigator.clipboard.writeText(message.content); const icon = actionsDiv.querySelector('.message-copy i'); icon.className = 'fas fa-check'; setTimeout(() => icon.className = 'fas fa-copy', 2000); }); messageBubble.appendChild(actionsDiv); } messageDiv.innerHTML = `<div class="message-avatar">${avatar}</div>`; messageDiv.appendChild(messageBubble); elements.chatArea.appendChild(messageDiv); }); if (state.isAiTyping && !document.getElementById('typingIndicator')) { addTypingIndicator(); } setupCodePreviewButtons(); scrollToBottom(); renderConversationList(); } catch (e) { console.error('Fatal error during rendering:', e); elements.chatArea.innerHTML = `<div style="text-align: center; color: red; padding: 20px;">${translations[state.currentLanguage]['error_unknown']}</div>`; } }
+        function scrollToBottom() { elements.chatArea.scrollTop = elements.chatArea.scrollHeight; }
+        function clearCurrentChat() { const conversation = getCurrentConversation(); if (conversation) { conversation.messages = []; renderCurrentConversation(); saveState(); } }
+        function exportChat() { const conversation = getCurrentConversation(); if (!conversation || conversation.messages.length === 0) { alert(translations[state.currentLanguage]['no_messages_export']); return; } let markdown = `# ${conversation.title}\n\n`; conversation.messages.forEach(msg => { if (msg.role === 'system') return; const role = msg.role === 'user' ? 'You' : 'AI'; markdown += `**${role}**:\n\n${msg.content}\n\n---\n\n`; }); const blob = new Blob([markdown], { type: 'text/markdown' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `${conversation.title.replace(/[^a-z0-9]/gi, '_')}.md`; a.click(); URL.revokeObjectURL(url); }
+        async function saveSettings() { const newApiKey = elements.apiKeyInput.value.trim(); if (newApiKey !== state.apiKey) { state.apiKey = newApiKey; state.apiTier = await validateApiKeyTier(newApiKey); } state.systemPrompt = elements.systemPrompt.value; saveState(); elements.settingsModal.classList.remove('show'); updateInputAreaState(); }
+        function createNewConversation() { state.chatCounter++; const newId = Date.now().toString(); const newConversation = { id: newId, title: `${translations[state.currentLanguage]['new_chat']} ${state.chatCounter}`, messages: [] }; state.conversations.push(newConversation); state.currentConversationId = newId; renderConversationList(); renderCurrentConversation(); saveState(); if (window.innerWidth <= 768 && !state.sidebarHidden) toggleSidebar(); }
+        function renderChatListItem(conversation) { const chatItem = document.createElement('div'); chatItem.className = 'chat-item'; if (conversation.id === state.currentConversationId) chatItem.classList.add('active'); chatItem.innerHTML = ` <div class="chat-item-icon">${aiAvatar}</div> <div class="chat-item-title">${escapeHtml(conversation.title)}</div> <div class="chat-item-actions"> <span class="chat-item-pin ${state.pinnedChats.includes(conversation.id) ? 'pinned' : ''}" title="Pin Conversation"><i class="fas fa-thumbtack"></i></span> <span class="chat-item-delete" title="Delete Conversation"><i class="fas fa-trash"></i></span> </div> `; const pinBtn = chatItem.querySelector('.chat-item-pin'); const deleteBtn = chatItem.querySelector('.chat-item-delete'); chatItem.addEventListener('click', (e) => { if(pinBtn.contains(e.target) || deleteBtn.contains(e.target)) return; state.currentConversationId = conversation.id; renderCurrentConversation(); saveState(); if (window.innerWidth <= 768 && !state.sidebarHidden) toggleSidebar(); }); pinBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePinChat(conversation.id); }); deleteBtn.addEventListener('click', (e) => { e.stopPropagation(); deleteConversation(conversation.id); }); return chatItem; }
+        function renderConversationList(list = state.conversations) { elements.chatList.innerHTML = ''; const pinned = list.filter(c => state.pinnedChats.includes(c.id)).sort((a,b) => b.id - a.id); const unpinned = list.filter(c => !state.pinnedChats.includes(c.id)).sort((a,b) => b.id - a.id); if (list.length === 0 && elements.searchInput.value) { elements.chatList.innerHTML = `<div style="text-align:center; padding: 15px; color: var(--light-text);">${translations[state.currentLanguage]['no_conversations_found']}</div>`; return; } [...pinned, ...unpinned].forEach(conv => { elements.chatList.appendChild(renderChatListItem(conv)); }); }
+        function togglePinChat(id) { const index = state.pinnedChats.indexOf(id); if (index > -1) state.pinnedChats.splice(index, 1); else state.pinnedChats.unshift(id); saveState(); renderConversationList(); }
+        function deleteConversation(id) { state.conversations = state.conversations.filter(c => c.id !== id); state.pinnedChats = state.pinnedChats.filter(pId => pId !== id); if (state.currentConversationId === id) { const nextConv = state.conversations.find(c => state.pinnedChats.includes(c.id)) || state.conversations.sort((a,b) => b.id - a.id)[0]; state.currentConversationId = nextConv ? nextConv.id : null; if (!state.currentConversationId) { createNewConversation(); } else { renderCurrentConversation(); } } saveState(); renderConversationList(); }
+        function clearAllConversations() { if (confirm(translations[state.currentLanguage]['clear_all_confirm'])) { state = {...state, conversations: [], pinnedChats: [], chatCounter: 0 }; createNewConversation(); saveState(); } }
+    
+        init();
+    });
+</script>
 </body>
 </html>
