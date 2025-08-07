@@ -1,7 +1,7 @@
 # FreeAI 
 
 [![GitHub stars](https://img.shields.io/github/stars/Azad-sl/FreeAI?style=social)](https://github.com/Azad-sl/FreeAI/stargazers)
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Azad-sl/FreeAI&project-name=FreeAI&repository-name=FreeAI)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 FreeAI - A powerful AI platform powered by [Pollinations.AI](https://pollinations.ai/), offering **free, no-registration, unlimited** AI chat, image generation, and TTS services.
