@@ -1,8 +1,9 @@
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="shortcut icon" href="/favicon.ico">
 <title>Free AI 文本转音频</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,6 +19,7 @@
 --text-light: #64748B;
 --success-color: #10B981;
 --error-color: #EF4444;
+--warning-color: #F59E0B;
 --border-radius: 10px;
 --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04), 0 0 1px rgba(0, 0, 0, 0.1);
 --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -36,13 +38,8 @@
 --voice-ash: #4B5563;
 --voice-sage: #059669;
 --voice-amuch: #F59E0B;
---voice-aster: #2563EB;
---voice-brook: #3B82F6;
---voice-clover: #EC4899;
 --voice-dan: #1F2937;
---voice-elan: #7C3AED;
---voice-marilyn: #DB2777;
---voice-meadow: #34D399;
+--voice-hypnosis: #a855f7;
 }
 * {
 box-sizing: border-box;
@@ -63,17 +60,17 @@ radial-gradient(circle at 20% 90%, rgba(79, 70, 229, 0.03) 0%, transparent 600px
 .container {
 max-width: 1400px;
 margin: 0 auto;
-padding: 1.5rem 1rem; /* 减小顶部和底部内边距 */
+padding: 1.5rem 1rem;
 }
 header {
-padding: 1.5rem 0 2rem; /* 减小页眉的内边距 */
+padding: 1.5rem 0 2rem;
 text-align: center;
 position: relative;
 }
 h1 {
 font-size: 2.6rem;
 font-weight: 800;
-margin-bottom: 0.75rem; /* 减小标题下方间距 */
+margin-bottom: 0.75rem;
 background: var(--gradient-primary);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
@@ -89,8 +86,8 @@ line-height: 1.6;
 }
 .content {
 display: flex;
-gap: 1.5rem; /* 减小两列间距 */
-margin-top: 1.5rem; /* 减小顶部间距 */
+gap: 1.5rem;
+margin-top: 1.5rem;
 position: relative;
 }
 .text-input-section, .audio-output-section {
@@ -101,14 +98,14 @@ width: 50%;
 background-color: var(--card-bg);
 border-radius: var(--border-radius);
 box-shadow: var(--box-shadow);
-padding: 1.25rem; /* 减小卡片内边距 */
-margin-bottom: 1.25rem; /* 减小卡片间距 */
+padding: 1.25rem;
+margin-bottom: 1.25rem;
 transition: var(--transition);
 position: relative;
 overflow: hidden;
 border: 1px solid rgba(226, 232, 240, 0.6);
 backdrop-filter: blur(10px);
-height: auto; /* 移除固定高度 */
+height: auto;
 }
 .card:hover {
 box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06), 0 0 2px rgba(0, 0, 0, 0.1);
@@ -117,10 +114,11 @@ transform: translateY(-2px);
 .section-title {
 font-size: 1.25rem;
 font-weight: 600;
-margin-bottom: 1rem; /* 减小标题下方间距 */
+margin-bottom: 1rem;
 color: var(--text-color);
 display: flex;
 align-items: center;
+justify-content: space-between;
 }
 .section-title i {
 margin-right: 0.75rem;
@@ -131,7 +129,7 @@ font-size: 1.1rem;
 }
 textarea {
 width: 100%;
-height: 180px; /* 减小文本框的高度 */
+height: 180px;
 padding: 1rem;
 border: 1px solid var(--border-color);
 border-radius: var(--border-radius);
@@ -149,10 +147,60 @@ border-color: var(--primary-light);
 box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 background-color: white;
 }
+#api-token-toggle {
+cursor: pointer;
+color: var(--text-light);
+transition: color 0.3s;
+position: relative;
+}
+#api-token-toggle:hover {
+color: var(--primary-color);
+}
+#api-token-toggle.active {
+color: var(--success-color);
+}
+#api-token-container {
+display: none;
+padding: 1rem;
+background-color: #f7f8fc;
+border-radius: var(--border-radius);
+margin-bottom: 1rem;
+border: 1px solid var(--border-color);
+}
+#api-token-container p {
+font-size: 0.9rem;
+color: var(--text-light);
+margin-bottom: 0.75rem;
+line-height: 1.5;
+}
+#api-token-container a {
+color: var(--primary-color);
+text-decoration: none;
+font-weight: 500;
+}
+#api-token-container a:hover {
+text-decoration: underline;
+}
+.input-group {
+display: flex;
+gap: 0.5rem;
+}
+#api-token-input {
+flex: 1;
+padding: 0.6rem 0.8rem;
+border: 1px solid var(--border-color);
+border-radius: var(--border-radius);
+font-size: 0.9rem;
+}
+#api-token-input:focus {
+outline: none;
+border-color: var(--primary-light);
+box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
 .text-stats {
 display: flex;
 align-items: center;
-margin-bottom: 1rem; /* 减小下方间距 */
+margin-bottom: 1rem;
 font-size: 0.9rem;
 color: var(--text-light);
 }
@@ -173,7 +221,7 @@ background: var(--gradient-primary);
 color: white;
 border: none;
 padding: 0.75rem 1.25rem;
-height: 2.75rem; /* 减小按钮高度 */
+height: 2.75rem;
 cursor: pointer;
 border-radius: var(--border-radius);
 font-size: 1rem;
@@ -182,6 +230,7 @@ transition: var(--transition);
 box-shadow: 0 2px 6px rgba(79, 70, 229, 0.3);
 position: relative;
 overflow: hidden;
+text-decoration: none; 
 }
 .btn::after {
 content: '';
@@ -200,6 +249,11 @@ opacity: 1;
 .btn:active {
 transform: translateY(1px);
 box-shadow: 0 1px 3px rgba(79, 70, 229, 0.2);
+}
+.btn:disabled {
+cursor: not-allowed;
+background: #BDBDBD;
+box-shadow: none;
 }
 .btn-success {
 background: linear-gradient(135deg, #10B981, #059669);
@@ -225,6 +279,10 @@ display: none;
 .btn i {
 margin-right: 0.5rem;
 }
+.btn .spinner {
+display: inline-block; width: 1.25rem; height: 1.25rem; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: #ffffff; animation: spin 1s linear infinite; margin-left: 0.6rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 .btn-danger {
 background: linear-gradient(135deg, #EF4444, #DC2626);
 box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
@@ -234,307 +292,11 @@ padding: 0.4rem 0.8rem;
 height: 2.2rem;
 font-size: 0.9rem;
 }
-.select-wrapper {
-position: relative;
-margin-bottom: 1.25rem;
-}
-.select-icon {
-position: absolute;
-right: 1rem;
-top: 50%;
-transform: translateY(-50%);
-color: var(--text-light);
-pointer-events: none;
-}
-select {
-width: 100%;
-padding: 0.8rem 1rem;
-border: 1px solid var(--border-color);
-border-radius: var(--border-radius);
-font-size: 1rem;
-background-color: rgba(255, 255, 255, 0.8);
-appearance: none;
-transition: var(--transition);
-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03);
-cursor: pointer;
-}
-select:focus {
-outline: none;
-border-color: var(--primary-light);
-box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-background-color: white;
-}
-.voice-selection {
-margin-bottom: 1.25rem; /* 减小下方间距 */
-}
-.voice-selection label {
-display: block;
-margin-bottom: 0.5rem; /* 减小下方间距 */
-font-size: 0.95rem;
-color: var(--text-light);
-font-weight: 500;
-}
-.audio-preview {
-margin-bottom: 1.25rem; /* 减小下方间距 */
-}
-.custom-audio-player {
-width: 100%;
-margin-top: 0.75rem; /* 减小上方间距 */
-border-radius: var(--border-radius);
-background: #F1F5F9;
-padding: 0.75rem; /* 减小内边距 */
-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-audio {
-width: 100%;
-height: 60px; /* 减小音频播放器高度 */
-border-radius: 25px;
-}
-audio::-webkit-media-controls-panel {
-background: linear-gradient(135deg, #F1F5F9, #F8FAFC);
-}
-audio::-webkit-media-controls-play-button {
-background-color: var(--primary-light);
-border-radius: 50%;
-}
-.status {
-margin-top: 1rem; /* 减小上方间距 */
-padding: 0.75rem; /* 减小内边距 */
-border-radius: var(--border-radius);
-font-size: 0.95rem;
-display: none;
-animation: fadeInUp 0.4s ease;
-font-weight: 500;
-}
-@keyframes fadeInUp {
-from { opacity: 0; transform: translateY(10px); }
-to { opacity: 1; transform: translateY(0); }
-}
-.status.success {
-background-color: rgba(16, 185, 129, 0.1);
-color: #065F46;
-display: block;
-border-left: 3px solid var(--success-color);
-}
-.status.error {
-background-color: rgba(239, 68, 68, 0.1);
-color: #B91C1C;
-display: block;
-border-left: 3px solid var(--error-color);
-}
-.loading {
-display: none;
-align-items: center;
-margin: 1rem 0; /* 减小上下间距 */
-font-size: 0.95rem;
-color: var(--text-light);
-}
-.loading .spinner {
-display: inline-block;
-width: 1.25rem;
-height: 1.25rem;
-border: 2px solid rgba(79, 70, 229, 0.2);
-border-radius: 50%;
-border-top-color: var(--primary-color);
-animation: spin 1s linear infinite;
-margin-right: 0.6rem;
-}
-@keyframes spin {
-to { transform: rotate(360deg); }
-}
-.history-section {
-margin-top: 1.25rem; /* 减小上方间距 */
-}
-.history-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 0.75rem; /* 减小下方间距 */
-}
-.history-warning {
-background-color: rgba(250, 204, 21, 0.1);
-border-left: 3px solid #FACC15;
-padding: 0.6rem 0.75rem; /* 减小内边距 */
-margin-bottom: 1rem; /* 减小下方间距 */
-border-radius: var(--border-radius);
-font-size: 0.9rem;
-color: #854D0E;
-display: flex;
-align-items: center;
-}
-.history-warning i {
-margin-right: 0.5rem;
-color: #EAB308;
-}
-.history-container {
-max-height: 350px; /* 减小历史记录的最大高度 */
-overflow-y: auto;
-scrollbar-width: thin;
-scrollbar-color: var(--primary-light) #F1F5F9;
-}
-.history-container::-webkit-scrollbar {
-width: 6px;
-}
-.history-container::-webkit-scrollbar-track {
-background: #F1F5F9;
-border-radius: 10px;
-}
-.history-container::-webkit-scrollbar-thumb {
-background-color: var(--primary-light);
-border-radius: 10px;
-}
-.history-item {
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 0.75rem 0.5rem; /* 减小内边距 */
-border-bottom: 1px solid var(--border-color);
-transition: var(--transition);
-border-radius: 0.5rem;
-}
-.history-item:hover {
-background-color: rgba(99, 102, 241, 0.04);
-}
-.history-item:last-child {
-border-bottom: none;
-}
-.history-info {
-flex: 1;
-min-width: 0;
-padding-right: 1rem;
-}
-.history-timestamp {
-font-size: 0.8rem;
-color: var(--text-light);
-margin-bottom: 0.3rem; /* 减小下方间距 */
-}
-.history-voice {
-font-size: 0.95rem;
-font-weight: 600;
-display: flex;
-align-items: center;
-color: var(--primary-dark);
-margin-bottom: 0.2rem; /* 减小下方间距 */
-}
-.history-voice::before {
-content: '';
-display: inline-block;
-width: 0.5rem;
-height: 0.5rem;
-background: var(--gradient-primary);
-border-radius: 50%;
-margin-right: 0.5rem;
-}
-.history-text {
-font-size: 0.9rem;
-color: var(--text-light);
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
-max-width: 100%;
-}
-.no-history {
-color: var(--text-light);
-font-size: 0.95rem;
-text-align: center;
-padding: 1.5rem 0; /* 减小内边距 */
-}
-footer {
-text-align: center;
-padding: 2rem 0 1.5rem; /* 减小页脚内边距 */
-color: var(--text-light);
-font-size: 0.9rem;
-opacity: 0.8;
-}
-footer i {
-color: var(--primary-light);
-}
-/* Feature card */
-.features-card {
-margin-top: 1.5rem; /* 减小上方间距 */
-background: linear-gradient(180deg, #FFFFFF, #F8FAFC);
-border-radius: var(--border-radius);
-padding: 1.25rem; /* 减小内边距 */
-box-shadow: var(--box-shadow);
-border: 1px solid var(--border-color);
-}
-.features-title {
-font-size: 1.1rem;
-font-weight: 600;
-margin-bottom: 0.75rem; /* 减小下方间距 */
-color: var(--text-color);
-text-align: center;
-}
-.features-list {
-list-style-type: none;
-padding: 0;
-margin: 0;
-}
-.feature-item {
-display: flex;
-align-items: flex-start;
-margin-bottom: 0.6rem; /* 减小下方间距 */
-padding-bottom: 0.6rem; /* 减小内部下方间距 */
-border-bottom: 1px solid var(--border-color);
-}
-.feature-item:last-child {
-margin-bottom: 0;
-padding-bottom: 0;
-border-bottom: none;
-}
-.feature-icon {
-flex-shrink: 0;
-width: 24px;
-height: 24px;
-background: var(--gradient-primary);
-border-radius: 50%;
-display: flex;
-align-items: center;
-justify-content: center;
-margin-right: 0.8rem;
-margin-top: 0.2rem;
-}
-.feature-icon i {
-font-size: 0.8rem;
-color: white;
-}
-.feature-text {
-font-size: 0.95rem;
-color: var(--text-color);
-line-height: 1.5;
-}
-/* Animations */
-@keyframes pulse {
-0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
-70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
-100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
-}
-@keyframes highlight {
-0% { background-color: rgba(99, 102, 241, 0.1); }
-100% { background-color: transparent; }
-}
-.history-item.new {
-animation: highlight 2s ease;
-}
-/* Enhanced indicators */
-.badge {
-display: inline-flex;
-align-items: center;
-padding: 0.25rem 0.6rem;
-border-radius: 20px;
-font-size: 0.8rem;
-font-weight: 600;
-margin-left: 0.5rem;
-background: var(--gradient-secondary);
-color: white;
-opacity: 0.9;
-}
-/* 优化语音风格选择按钮 */
 .voice-style-selector {
 display: grid;
-grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); /* 减小最小宽度 */
-gap: 0.4rem; /* 减小间距 */
-margin-bottom: 1.25rem; /* 减小下方间距 */
+grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+gap: 0.4rem;
+margin-bottom: 1.25rem;
 }
 .voice-style-option {
 min-width: 0;
@@ -546,7 +308,7 @@ display: none;
 display: flex;
 flex-direction: column;
 align-items: center;
-padding: 0.5rem 0.3rem; /* 减小内边距 */
+padding: 0.5rem 0.3rem;
 border: 2px solid var(--border-color);
 border-radius: var(--border-radius);
 cursor: pointer;
@@ -563,7 +325,7 @@ box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 .voice-style-icon {
 font-size: 1rem;
-margin-bottom: 0.2rem; /* 减小下方间距 */
+margin-bottom: 0.2rem;
 }
 .voice-style-name {
 font-weight: 600;
@@ -576,610 +338,310 @@ font-size: 0.7rem;
 color: var(--text-light);
 line-height: 1.1;
 }
-/* 优化预览窗格 */
-.preview-container {
-background: linear-gradient(135deg, #f9fafb, #f3f4f6);
-border-radius: 15px;
-padding: 1.5rem; /* 减小内边距 */
-box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-margin-bottom: 1.25rem; /* 减小下方间距 */
-position: relative;
-overflow: hidden;
-min-height: 250px; /* 减小最小高度 */
-display: flex;
-flex-direction: column;
-}
-.preview-header {
-display: flex;
-align-items: center;
-margin-bottom: 1.25rem; /* 减小下方间距 */
-}
-.preview-title {
-font-size: 1.2rem;
-font-weight: 600;
-margin: 0;
-display: flex;
-align-items: center;
-}
-.preview-title i {
-margin-right: 0.75rem;
-font-size: 1.4rem;
-background: var(--gradient-primary);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-}
-.preview-icon {
-position: absolute;
-right: -15px;
-top: -15px;
-width: 80px; /* 减小大小 */
-height: 80px; /* 减小大小 */
-opacity: 0.05;
-transform: rotate(15deg);
-color: var(--primary-color);
-}
-.preview-placeholder {
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-flex: 1;
-color: var(--text-light);
-border: 2px dashed #e5e7eb;
-border-radius: 10px;
-font-size: 0.95rem;
-}
-.preview-placeholder i {
-margin-bottom: 0.75rem; /* 减小下方间距 */
-font-size: 2.2rem; /* 减小图标大小 */
-opacity: 0.5;
-}
-/* 优化快捷键提示样式 */
-.shortcut-hint {
-display: inline-flex;
-align-items: center;
-margin-left: 0.75rem; /* 减小左边距 */
-font-size: 0.8rem;
-color: var(--text-light);
-vertical-align: middle;
-}
-.shortcut-hint kbd {
-background: #F1F5F9;
-padding: 0.1rem 0.3rem;
-border-radius: 3px;
-border: 1px solid #E2E8F0;
-margin: 0 0.2rem;
-font-family: monospace;
-}
-/* 优化使用提示区域 */
-.usage-tips {
-background: linear-gradient(to right, #faf5ff, #f5f3ff);
-border-radius: var(--border-radius);
-padding: 1rem; /* 减小内边距 */
-margin-top: 1.25rem; /* 减小上方间距 */
-}
-.tips-title {
-font-size: 1rem;
-font-weight: 600;
-margin-bottom: 0.6rem; /* 减小下方间距 */
-display: flex;
-align-items: center;
-}
-.tips-title i {
-margin-right: 0.5rem;
-color: var(--secondary-color);
-}
-.tips-list {
-list-style: none;
-padding: 0;
-margin: 0;
-}
-.tips-list li {
-display: flex;
-align-items: baseline;
-margin-bottom: 0.4rem; /* 减小下方间距 */
-font-size: 0.9rem;
-}
-.tips-list li:before {
-content: "•";
-color: var(--secondary-color);
-font-weight: bold;
-margin-right: 0.5rem;
-}
-.current-voice-info {
-display: flex;
-align-items: center;
-margin-bottom: 0.75rem; /* 减小下方间距 */
-background: rgba(255, 255, 255, 0.7);
-padding: 0.6rem 0.75rem; /* 减小内边距 */
-border-radius: 8px;
-}
-.current-voice-icon {
-width: 36px; /* 减小图标大小 */
-height: 36px; /* 减小图标大小 */
-border-radius: 50%;
-display: flex;
-align-items: center;
-justify-content: center;
-margin-right: 0.6rem; /* 减小右边距 */
-color: white;
-}
-.current-voice-details {
-flex: 1;
-}
-.current-voice-name {
-font-weight: 600;
-font-size: 1rem;
-margin-bottom: 0.1rem; /* 减小下方间距 */
-}
-.current-voice-desc {
-font-size: 0.8rem;
-color: var(--text-light);
-}
-.divider {
-height: 1px;
-background: var(--border-color);
-margin: 1.25rem 0; /* 减小上下间距 */
-}
-.input-section-title {
-font-size: 1.1rem;
-font-weight: 600;
-margin-bottom: 0.75rem; /* 减小下方间距 */
-display: flex;
-align-items: center;
-}
-.input-section-title i {
-margin-right: 0.5rem;
-color: var(--primary-color);
-}
-/* 响应式设计 */
-@media (max-width: 1024px) {
-.content {
-flex-direction: column;
-}
-.text-input-section, .audio-output-section {
+.custom-audio-player {
 width: 100%;
+margin-top: 0.75rem;
+border-radius: var(--border-radius);
+background: #F1F5F9;
+padding: 0.75rem;
+box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
+audio {
+width: 100%;
+height: 60px;
+border-radius: 25px;
 }
-@media (max-width: 768px) {
-.container {
-padding: 1rem 0.8rem;
+.status {
+margin-top: 1rem;
+padding: 0.75rem;
+border-radius: var(--border-radius);
+font-size: 0.95rem;
+display: none;
+animation: fadeInUp 0.4s ease;
+font-weight: 500;
 }
-h1 {
-font-size: 2rem;
+@keyframes fadeInUp {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
 }
-.description {
-font-size: 1rem;
-padding: 0 1rem;
+.status.success {
+background-color: rgba(16, 185, 129, 0.1); color: #065F46; display: block; border-left: 3px solid var(--success-color);
 }
-.card {
-padding: 1rem; /* 进一步减小移动端的内边距 */
+.status.error {
+background-color: rgba(239, 68, 68, 0.1); color: #B91C1C; display: block; border-left: 3px solid var(--error-color);
 }
-.section-title {
-font-size: 1.1rem;
-margin-bottom: 0.75rem;
+.status.warning {
+background-color: rgba(245, 158, 11, 0.1); color: #92400E; display: block; border-left: 3px solid var(--warning-color);
 }
-textarea {
-height: 160px; /* 进一步减小移动端的文本框高度 */
+.loading {
+display: none; align-items: center; margin: 1rem 0; font-size: 0.95rem; color: var(--text-light);
 }
-}
-</style></head>
+/* Spinner is now part of .btn class_config */
+.history-section { margin-top: 1.25rem; }
+.history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+.history-warning { background-color: rgba(250, 204, 21, 0.1); border-left: 3px solid #FACC15; padding: 0.6rem 0.75rem; margin-bottom: 1rem; border-radius: var(--border-radius); font-size: 0.9rem; color: #854D0E; display: flex; align-items: center;}
+.history-warning i { margin-right: 0.5rem; color: #EAB308; }
+.history-container { max-height: 350px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--primary-light) #F1F5F9; }
+.history-container::-webkit-scrollbar { width: 6px; }
+.history-container::-webkit-scrollbar-track { background: #F1F5F9; border-radius: 10px; }
+.history-container::-webkit-scrollbar-thumb { background-color: var(--primary-light); border-radius: 10px; }
+.history-item { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0.5rem; border-bottom: 1px solid var(--border-color); transition: var(--transition); border-radius: 0.5rem; }
+.history-item:hover { background-color: rgba(99, 102, 241, 0.04); }
+.history-item:last-child { border-bottom: none; }
+.history-info { flex: 1; min-width: 0; padding-right: 1rem; }
+.history-timestamp { font-size: 0.8rem; color: var(--text-light); margin-bottom: 0.3rem; }
+.history-voice { font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; color: var(--primary-dark); margin-bottom: 0.2rem; }
+.history-voice::before { content: ''; display: inline-block; width: 0.5rem; height: 0.5rem; background: var(--gradient-primary); border-radius: 50%; margin-right: 0.5rem; }
+.history-text { font-size: 0.9rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.no-history { color: var(--text-light); font-size: 0.95rem; text-align: center; padding: 1.5rem 0; }
+footer { text-align: center; padding: 2rem 0 1.5rem; color: var(--text-light); font-size: 0.9rem; opacity: 0.8; }
+footer i { color: var(--primary-light); }
+.features-card { margin-top: 1.5rem; background: linear-gradient(180deg, #FFFFFF, #F8FAFC); border-radius: var(--border-radius); padding: 1.25rem; box-shadow: var(--box-shadow); border: 1px solid var(--border-color); }
+.features-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-color); text-align: center; }
+.features-list { list-style-type: none; padding: 0; margin: 0; }
+.feature-item { display: flex; align-items: flex-start; margin-bottom: 0.6rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border-color); }
+.feature-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.feature-icon { flex-shrink: 0; width: 24px; height: 24px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 0.8rem; margin-top: 0.2rem; }
+.feature-icon i { font-size: 0.8rem; color: white; }
+.feature-text { font-size: 0.95rem; color: var(--text-color); line-height: 1.5; }
+.history-item.new { animation: highlight 2s ease; }
+@keyframes highlight { 0% { background-color: rgba(99, 102, 241, 0.1); } 100% { background-color: transparent; } }
+.badge { display: inline-flex; align-items: center; padding: 0.25rem 0.6rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-left: 0.5rem; background: var(--gradient-secondary); color: white; opacity: 0.9; }
+.preview-container { background: linear-gradient(135deg, #f9fafb, #f3f4f6); border-radius: 15px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); margin-bottom: 1.25rem; position: relative; overflow: hidden; min-height: 250px; display: flex; flex-direction: column; }
+.preview-header { display: flex; align-items: center; margin-bottom: 1.25rem; }
+.preview-title { font-size: 1.2rem; font-weight: 600; margin: 0; display: flex; align-items: center; }
+.preview-title i { margin-right: 0.75rem; font-size: 1.4rem; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.preview-icon { position: absolute; right: -15px; top: -15px; width: 80px; height: 80px; opacity: 0.05; transform: rotate(15deg); color: var(--primary-color); }
+.preview-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; color: var(--text-light); border: 2px dashed #e5e7eb; border-radius: 10px; font-size: 0.95rem; }
+.preview-placeholder i { margin-bottom: 0.75rem; font-size: 2.2rem; opacity: 0.5; }
+.shortcut-hint { display: inline-flex; align-items: center; margin-left: 0.75rem; font-size: 0.8rem; color: var(--text-light); vertical-align: middle; }
+.shortcut-hint kbd { background: #F1F5F9; padding: 0.1rem 0.3rem; border-radius: 3px; border: 1px solid #E2E8F0; margin: 0 0.2rem; font-family: monospace; }
+.usage-tips { background: linear-gradient(to right, #faf5ff, #f5f3ff); border-radius: var(--border-radius); padding: 1rem; margin-top: 1.25rem; }
+.tips-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.6rem; display: flex; align-items: center; }
+.tips-title i { margin-right: 0.5rem; color: var(--secondary-color); }
+.tips-list { list-style: none; padding: 0; margin: 0; }
+.tips-list li { display: flex; align-items: baseline; margin-bottom: 0.4rem; font-size: 0.9rem; color: #374151; }
+.tips-list li::before { content: "•"; color: var(--secondary-color); font-weight: bold; margin-right: 0.5rem; }
+.current-voice-info { display: flex; align-items: center; margin-bottom: 0.75rem; background: rgba(255, 255, 255, 0.7); padding: 0.6rem 0.75rem; border-radius: 8px; }
+.current-voice-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 0.6rem; color: white; }
+.current-voice-details { flex: 1; }
+.current-voice-name { font-weight: 600; font-size: 1rem; margin-bottom: 0.1rem; }
+.current-voice-desc { font-size: 0.8rem; color: var(--text-light); }
+.divider { height: 1px; background: var(--border-color); margin: 1.25rem 0; }
+.input-section-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.75rem; display: flex; align-items: center; }
+.input-section-title i { margin-right: 0.5rem; color: var(--primary-color); }
+.lang-toggle-container { position: absolute; top: 2rem; right: 2rem; display: flex; background-color: rgba(255, 255, 255, 0.7); backdrop-filter: blur(5px); border-radius: 8px; border: 1px solid var(--border-color); padding: 4px; z-index: 10; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
+.lang-option { padding: 4px 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 0.9em; font-weight: 500; letter-spacing: 0.5px; color: var(--text-light); border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
+.lang-option.active { background: var(--primary-color); color: #ffffff; box-shadow: 0 1px 4px rgba(79, 70, 229, 0.3); }
+@media (max-width: 1024px) { .content { flex-direction: column; } .text-input-section, .audio-output-section { width: 100%; } }
+@media (max-width: 768px) { .container { padding: 1rem 0.8rem; } h1 { font-size: 2rem; } .description { font-size: 1rem; padding: 0 1rem; } .card { padding: 1rem; } textarea { height: 160px; } .lang-toggle-container { top: 1rem !important; right: 1rem !important; } }
+</style>
+</head>
 <body>
-<div class="blob blob-1"></div>
-<div class="blob blob-2"></div>
 <div class="container">
 <header>
-
-<style>
-h1 {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 2.8em;
-    text-align: center;
-    margin: 30px 0;
-    color: transparent;
-    background: linear-gradient(45deg, #00f3ff 30%, #a855f7 70%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    text-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
-    position: relative;
-    padding: 20px;
-    letter-spacing: 2px;
-}
-
-h1::before,
-h1::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #3d3dff);
-    animation: borderExpand 1.5s ease-out forwards;
-}
-
-h1::before {
-    top: 0;
-    left: 0;
-}
-
-h1::after {
-    bottom: 0;
-    right: 0;
-    animation-delay: 0.5s;
-}
-
-@keyframes borderExpand {
-    to {
-        width: 100%;
-    }
-}
-</style>
-
-
-<h1>Free AI 文本转音频</h1>
-<p class="description">输入文本，选择语音风格，一键将文字转换为自然流畅的语音。<br>支持多种声音特征，帮您创建专业水准的音频内容。</p>
-
+<div class="lang-toggle-container" title="Switch Language">
+    <div class="lang-option" id="lang-zh">中</div>
+    <div class="lang-option" id="lang-en">EN</div>
+</div>
+<h1 data-lang-zh="Free AI 文本转音频" data-lang-en="Free AI Text-to-Speech">Free AI 文本转音频</h1>
+<p class="description">
+<span data-lang-zh="输入文本，选择语音风格，一键将文字转换为自然流畅的语音。" data-lang-en="Enter text, choose a voice style, and convert text into natural, fluent speech with one click.">输入文本，选择语音风格，一键将文字转换为自然流畅的语音。</span><br>
+<span data-lang-zh="支持多种声音特征，帮您创建专业水准的音频内容。" data-lang-en="Supports various voice characteristics to help you create professional-level audio content.">支持多种声音特征，帮您创建专业水准的音频内容。</span>
+</p>
 <br>
-
-<style>
-.sci-fi-btn {
-    position: relative;
-    padding: 4px 8px;
-    font-family: 'Arial', sans-serif;
-    font-size: 1em;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #00f3ff;
-    background: #0a0a2e;
-    border: 2px solid #3d3dff;
-    border-radius: 8px;
-    cursor: pointer;
-    overflow: hidden;
-    transition: 0.5s;
-    text-shadow: 0 0 10px #00f3ff;
-    box-shadow: 0 0 20px rgba(61, 61, 255, 0.3);
-}
-
-.sci-fi-btn:hover {
-    background: #13134e;
-    box-shadow: 0 0 30px rgba(61, 61, 255, 0.6);
-    transform: scale(1.05);
-    color: #ffffff;
-}
-
-
-
-.sci-fi-btn:hover::before {
-    left: 100%;
-}
-
-
-
-.glowing-border:nth-child(1) {
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #3d3dff);
-    animation: borderTop 2s linear infinite;
-}
-
-@keyframes borderTop {
-    0% { left: -2px; }
-    100% { left: 100%; }
-}
-
-/* 添加点击动画 */
-.sci-fi-btn:active {
-    transform: scale(0.45);
-    transition: 0.1s;
-}
-
-</style>
-
-<a href="https://freeai.aihub.ren" class="sci-fi-btn" style="text-decoration: none;">
-    <!-- 添加流光边框 -->
-    <span class="glowing-border"></span>
-    <span class="glowing-border"></span>
-    返回首页
+<!-- [Task 2] Applied .btn class for unified styling -->
+<a href="https://freeai.aihub.ren" class="btn" style="text-decoration: none;">
+<span data-lang-zh="返回首页" data-lang-en="Homepage">返回首页</span>
 </a>
-
-
-
-
-
-
-
-
-
-
-
 </header>
 <div class="content">
 <section class="text-input-section">
 <div class="card">
-<h2 class="section-title"><i class="fas fa-microphone-alt"></i>语音生成</h2>
-<!-- 语音风格选择 -->
-<div class="input-section-title"><i class="fas fa-sliders"></i>选择语音风格</div>
-<p style="margin-bottom: 0.75rem; font-size: 0.95rem; color: var(--text-light);">每种风格都有其独特的音色和表现力，选择最适合您内容的声音</p>
+<h2 class="section-title">
+    <div><i class="fas fa-microphone-alt"></i><span data-lang-zh="语音生成" data-lang-en="Speech Generation">语音生成</span></div>
+    <i class="fas fa-key" id="api-token-toggle" title="设置API Token"></i>
+</h2>
+<div id="api-token-container">
+    <p data-lang-zh="此服务需要使用Pollinations AI的API Token。请前往官网获取免费的'seed'等级Token，然后粘贴到下方。" data-lang-en="This service requires an API Token from Pollinations AI. Please visit their official website to get a free 'seed' tier token, then paste it below.">此服务需要使用Pollinations AI的API Token。请前往官网获取免费的'seed'等级Token，然后粘贴到下方。</p>
+    <p><a href="https://auth.pollinations.ai" target="_blank">https://auth.pollinations.ai</a></p>
+    <div class="input-group">
+        <input type="password" id="api-token-input" placeholder="Enter your API Token here">
+        <button id="save-token-btn" class="btn btn-sm"><i class="fas fa-save"></i> <span data-lang-zh="保存" data-lang-en="Save">保存</span></button>
+    </div>
+</div>
+<div class="input-section-title"><i class="fas fa-sliders"></i><span data-lang-zh="选择语音风格" data-lang-en="Select Voice Style">选择语音风格</span></div>
+<p style="margin-bottom: 0.75rem; font-size: 0.95rem; color: var(--text-light);">
+<span data-lang-zh="每种风格都有其独特的音色和表现力，选择最适合您内容的声音" data-lang-en="Each style has its unique tone and expression, choose the most suitable voice for your content">每种风格都有其独特的音色和表现力，选择最适合您内容的声音</span>
+</p>
 <div class="voice-style-selector">
 <div class="voice-style-option">
-<input type="radio" id="voice-alloy" name="voiceStyle" value="alloy" checked>
+<input type="radio" id="voice-alloy" name="voiceStyle" value="openai-audio" data-voice="alloy" checked>
 <label for="voice-alloy">
 <span class="voice-style-icon"><i class="fas fa-microphone" style="color: var(--voice-alloy);"></i></span>
-<span class="voice-style-name">Alloy</span>
-<span class="voice-style-desc">平衡中性</span>
+<span class="voice-style-name">Alloy</span><span class="voice-style-desc" data-lang-zh="平衡中性" data-lang-en="Balanced"></span>
 </label>
 </div>
 <div class="voice-style-option">
-<input type="radio" id="voice-echo" name="voiceStyle" value="echo">
+<input type="radio" id="voice-echo" name="voiceStyle" value="openai-audio" data-voice="echo">
 <label for="voice-echo">
 <span class="voice-style-icon"><i class="fas fa-microphone" style="color: var(--voice-echo);"></i></span>
-<span class="voice-style-name">Echo</span>
-<span class="voice-style-desc">深沉有力</span>
+<span class="voice-style-name">Echo</span><span class="voice-style-desc" data-lang-zh="深沉有力" data-lang-en="Deep"></span>
 </label>
 </div>
 <div class="voice-style-option">
-<input type="radio" id="voice-fable" name="voiceStyle" value="fable">
+<input type="radio" id="voice-fable" name="voiceStyle" value="openai-audio" data-voice="fable">
 <label for="voice-fable">
 <span class="voice-style-icon"><i class="fas fa-microphone" style="color: var(--voice-fable);"></i></span>
-<span class="voice-style-name">Fable</span>
-<span class="voice-style-desc">温暖讲述</span>
+<span class="voice-style-name">Fable</span><span class="voice-style-desc" data-lang-zh="温暖讲述" data-lang-en="Narrative"></span>
 </label>
 </div>
 <div class="voice-style-option">
-<input type="radio" id="voice-onyx" name="voiceStyle" value="onyx">
+<input type="radio" id="voice-onyx" name="voiceStyle" value="openai-audio" data-voice="onyx">
 <label for="voice-onyx">
 <span class="voice-style-icon"><i class="fas fa-microphone" style="color: var(--voice-onyx);"></i></span>
-<span class="voice-style-name">Onyx</span>
-<span class="voice-style-desc">威严庄重</span>
+<span class="voice-style-name">Onyx</span><span class="voice-style-desc" data-lang-zh="威严庄重" data-lang-en="Authoritative"></span>
 </label>
 </div>
 <div class="voice-style-option">
-<input type="radio" id="voice-nova" name="voiceStyle" value="nova">
+<input type="radio" id="voice-nova" name="voiceStyle" value="openai-audio" data-voice="nova">
 <label for="voice-nova">
 <span class="voice-style-icon"><i class="fas fa-microphone" style="color: var(--voice-nova);"></i></span>
-<span class="voice-style-name">Nova</span>
-<span class="voice-style-desc">友好专业</span>
+<span class="voice-style-name">Nova</span><span class="voice-style-desc" data-lang-zh="友好专业" data-lang-en="Friendly"></span>
 </label>
 </div>
 <div class="voice-style-option">
-<input type="radio" id="voice-shimmer" name="voiceStyle" value="shimmer">
+<input type="radio" id="voice-shimmer" name="voiceStyle" value="openai-audio" data-voice="shimmer">
 <label for="voice-shimmer">
 <span class="voice-style-icon"><i class="fas fa-microphone" style="color: var(--voice-shimmer);"></i></span>
-<span class="voice-style-name">Shimmer</span>
-<span class="voice-style-desc">轻快明亮</span>
+<span class="voice-style-name">Shimmer</span><span class="voice-style-desc" data-lang-zh="轻快明亮" data-lang-en="Bright"></span>
 </label>
 </div>
 <div class="voice-style-option">
-<input type="radio" id="voice-coral" name="voiceStyle" value="coral">
+<input type="radio" id="voice-coral" name="voiceStyle" value="openai-audio" data-voice="coral">
 <label for="voice-coral">
 <span class="voice-style-icon"><i class="fas fa-microphone" style="color: var(--voice-coral);"></i></span>
-<span class="voice-style-name">Coral</span>
-<span class="voice-style-desc">温柔平静</span>
+<span class="voice-style-name">Coral</span><span class="voice-style-desc" data-lang-zh="温柔平静" data-lang-en="Gentle"></span>
 </label>
 </div>
 <div class="voice-style-option">
-<input type="radio" id="voice-verse" name="voiceStyle" value="verse">
+<input type="radio" id="voice-verse" name="voiceStyle" value="openai-audio" data-voice="verse">
 <label for="voice-verse">
 <span class="voice-style-icon"><i class="fas fa-microphone" style="color: var(--voice-verse);"></i></span>
-<span class="voice-style-name">Verse</span>
-<span class="voice-style-desc">生动诗意</span>
+<span class="voice-style-name">Verse</span><span class="voice-style-desc" data-lang-zh="生动诗意" data-lang-en="Lively"></span>
 </label>
 </div>
 <div class="voice-style-option">
-<input type="radio" id="voice-ballad" name="voiceStyle" value="ballad">
+<input type="radio" id="voice-ballad" name="voiceStyle" value="openai-audio" data-voice="ballad">
 <label for="voice-ballad">
 <span class="voice-style-icon"><i class="fas fa-microphone" style="color: var(--voice-ballad);"></i></span>
-<span class="voice-style-name">Ballad</span>
-<span class="voice-style-desc">抒情柔和</span>
+<span class="voice-style-name">Ballad</span><span class="voice-style-desc" data-lang-zh="抒情柔和" data-lang-en="Melodious"></span>
 </label>
 </div>
 <div class="voice-style-option">
-<input type="radio" id="voice-ash" name="voiceStyle" value="ash">
+<input type="radio" id="voice-ash" name="voiceStyle" value="openai-audio" data-voice="ash">
 <label for="voice-ash">
 <span class="voice-style-icon"><i class="fas fa-microphone" style="color: var(--voice-ash);"></i></span>
-<span class="voice-style-name">Ash</span>
-<span class="voice-style-desc">思考沉稳</span>
+<span class="voice-style-name">Ash</span><span class="voice-style-desc" data-lang-zh="思考沉稳" data-lang-en="Thoughtful"></span>
 </label>
 </div>
 <div class="voice-style-option">
-<input type="radio" id="voice-sage" name="voiceStyle" value="sage">
+<input type="radio" id="voice-sage" name="voiceStyle" value="openai-audio" data-voice="sage">
 <label for="voice-sage">
 <span class="voice-style-icon"><i class="fas fa-microphone" style="color: var(--voice-sage);"></i></span>
-<span class="voice-style-name">Sage</span>
-<span class="voice-style-desc">智慧老练</span>
+<span class="voice-style-name">Sage</span><span class="voice-style-desc" data-lang-zh="智慧老练" data-lang-en="Wise"></span>
 </label>
 </div>
 <div class="voice-style-option">
-<input type="radio" id="voice-amuch" name="voiceStyle" value="amuch">
+<input type="radio" id="voice-amuch" name="voiceStyle" value="openai-audio" data-voice="amuch">
 <label for="voice-amuch">
 <span class="voice-style-icon"><i class="fas fa-microphone" style="color: var(--voice-amuch);"></i></span>
-<span class="voice-style-name">Amuch</span>
-<span class="voice-style-desc">饱满自然</span>
+<span class="voice-style-name">Amuch</span><span class="voice-style-desc" data-lang-zh="饱满自然" data-lang-en="Full-bodied"></span>
 </label>
 </div>
 <div class="voice-style-option">
-<input type="radio" id="voice-aster" name="voiceStyle" value="aster">
-<label for="voice-aster">
-<span class="voice-style-icon"><i class="fas fa-microphone" style="color: var(--voice-aster);"></i></span>
-<span class="voice-style-name">Aster</span>
-<span class="voice-style-desc">清晰直接</span>
-</label>
-</div>
-<div class="voice-style-option">
-<input type="radio" id="voice-brook" name="voiceStyle" value="brook">
-<label for="voice-brook">
-<span class="voice-style-icon"><i class="fas fa-microphone" style="color: var(--voice-brook);"></i></span>
-<span class="voice-style-name">Brook</span>
-<span class="voice-style-desc">流畅舒适</span>
-</label>
-</div>
-<div class="voice-style-option">
-<input type="radio" id="voice-clover" name="voiceStyle" value="clover">
-<label for="voice-clover">
-<span class="voice-style-icon"><i class="fas fa-microphone" style="color: var(--voice-clover);"></i></span>
-<span class="voice-style-name">Clover</span>
-<span class="voice-style-desc">活泼年轻</span>
-</label>
-</div>
-<div class="voice-style-option">
-<input type="radio" id="voice-dan" name="voiceStyle" value="dan">
+<input type="radio" id="voice-dan" name="voiceStyle" value="openai-audio" data-voice="dan">
 <label for="voice-dan">
 <span class="voice-style-icon"><i class="fas fa-microphone" style="color: var(--voice-dan);"></i></span>
-<span class="voice-style-name">Dan</span>
-<span class="voice-style-desc">男声稳重</span>
+<span class="voice-style-name">Dan</span><span class="voice-style-desc" data-lang-zh="男声稳重" data-lang-en="Steady Male"></span>
 </label>
 </div>
 <div class="voice-style-option">
-<input type="radio" id="voice-elan" name="voiceStyle" value="elan">
-<label for="voice-elan">
-<span class="voice-style-icon"><i class="fas fa-microphone" style="color: var(--voice-elan);"></i></span>
-<span class="voice-style-name">Elan</span>
-<span class="voice-style-desc">优雅流利</span>
+<input type="radio" id="voice-hypnosis" name="voiceStyle" value="hypnosis-tracy">
+<label for="voice-hypnosis">
+<span class="voice-style-icon"><i class="fas fa-magic" style="color: var(--voice-hypnosis);"></i></span>
+<span class="voice-style-name">Hypnosis</span>
+<span class="voice-style-desc" data-lang-zh="催眠疗愈" data-lang-en="Hypnotic">催眠疗愈</span>
 </label>
 </div>
 </div>
 <div class="divider"></div>
-<!-- 文本输入 -->
-<div class="input-section-title"><i class="fas fa-pen-fancy"></i>输入文本</div>
-<textarea id="textInput" placeholder="使用ai回复生成对话。如需让AI照着念，可以在文本之前加上：请照着文本念"></textarea>
+<div class="input-section-title"><i class="fas fa-pen-fancy"></i><span data-lang-zh="输入文本" data-lang-en="Enter Text">输入文本</span></div>
+<textarea id="textInput" data-lang-placeholder-zh="使用ai回复生成对话。如需让AI照着念，可以在文本之前加上：请照着文本念" data-lang-placeholder-en="Use AI to generate dialogue. To have the AI read the text as is, prefix it with: Please read the following text"></textarea>
 <div class="text-stats">
-<div class="text-stat">
-<i class="fas fa-text-height"></i>
-<span id="charCount">字符数: 0</span>
-</div>
-<div class="text-stat">
-<i class="fas fa-clock"></i>
-<span id="durationEstimate">估计时长: 0 秒</span>
-</div>
+<div class="text-stat"><i class="fas fa-text-height"></i><span id="charCount"></span></div>
+<div class="text-stat"><i class="fas fa-clock"></i><span id="durationEstimate"></span></div>
 </div>
 <div style="display: flex; align-items: center;">
 <button id="generateBtn" class="btn">
-<i class="fas fa-waveform-voice"></i>
-<span id="generateBtnText">生成语音</span>
-<span id="generateBtnSpinner" class="spinner" style="display: none; margin-left: 8px;"></span>
+    <span id="generateBtnContent">
+        <i class="fas fa-play"></i>
+        <span id="generateBtnText" data-lang-zh="生成语音" data-lang-en="Generate Speech"></span>
+    </span>
+    <span id="generateBtnSpinner" class="spinner" style="display: none;"></span>
 </button>
-<div class="shortcut-hint">快捷键: <kbd>Ctrl</kbd> + <kbd>Enter</kbd></div>
+<div class="shortcut-hint"><span data-lang-zh="快捷键: " data-lang-en="Shortcut: "></span><kbd>Ctrl</kbd> + <kbd>Enter</kbd></div>
 </div>
 </div>
+<!-- [Task 3] Updated usage tips -->
 <div class="usage-tips">
-<div class="tips-title"><i class="fas fa-lightbulb"></i>使用小技巧</div>
+<div class="tips-title"><i class="fas fa-lightbulb"></i><span data-lang-zh="使用小技巧" data-lang-en="Usage Tips">使用小技巧</span></div>
 <ul class="tips-list">
-<li>输入标点符号可增加语音的自然停顿和语调变化</li>
-<li>不同语音风格适合不同场景，可以尝试多种风格找到最适合的</li>
-<li>大段文本可划分为多个段落，生成后再合并，效果更佳</li>
-<li>特殊专业术语可能需要加注音或替换为更通用的表达</li>
+    <li><span data-lang-zh="输入标点符号可增加语音的自然停顿和语调变化" data-lang-en="Using punctuation adds natural pauses and intonation changes to the speech"></span></li>
+    <li><span data-lang-zh="不同语音风格适合不同场景，可以尝试多种风格找到最适合的" data-lang-en="Different voice styles suit different scenarios; try various styles to find the best fit"></span></li>
+    <li><span data-lang-zh="大段文本可划分为多个段落，生成后再合并，效果更佳" data-lang-en="For long texts, splitting into paragraphs and merging after generation yields better results"></span></li>
+    <li><span data-lang-zh="特殊专业术语可能需要加注音或替换为更通用的表达" data-lang-en="Specialized terms may need phonetic spelling or replacement with more common expressions"></span></li>
 </ul>
 </div>
 </section>
 <section class="audio-output-section">
 <div class="card">
 <div class="preview-container">
-<div class="preview-icon">
-<i class="fas fa-headphones-alt fa-5x"></i>
-</div>
-<div class="preview-header">
-<h3 class="preview-title"><i class="fas fa-play-circle"></i>音频预览</h3>
-</div>
+<div class="preview-icon"><i class="fas fa-headphones-alt fa-5x"></i></div>
+<div class="preview-header"><h3 class="preview-title"><i class="fas fa-play-circle"></i><span data-lang-zh="音频预览" data-lang-en="Audio Preview"></span></h3></div>
 <div id="currentVoiceContainer" style="display: none;" class="current-voice-info">
-<div class="current-voice-icon" id="currentVoiceIcon">
-<i class="fas fa-microphone"></i>
-</div>
-<div class="current-voice-details">
-<div class="current-voice-name" id="currentVoiceName"></div>
-<div class="current-voice-desc" id="currentVoiceDesc"></div>
-</div>
+<div class="current-voice-icon" id="currentVoiceIcon"><i class="fas fa-microphone"></i></div>
+<div class="current-voice-details"><div class="current-voice-name" id="currentVoiceName"></div><div class="current-voice-desc" id="currentVoiceDesc"></div></div>
 </div>
 <div id="audioContainer" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
-<div class="preview-placeholder" id="noAudioMessage">
-<i class="fas fa-music"></i>
-<span>尚未生成语音</span>
-</div>
+<div class="preview-placeholder" id="noAudioMessage"><i class="fas fa-music"></i><span data-lang-zh="尚未生成语音" data-lang-en="No audio generated yet"></span></div>
 </div>
 </div>
 <div id="downloadContainer" style="display: none;">
-<button id="downloadBtn" class="btn btn-success">
-<i class="fas fa-download"></i>下载音频文件
-</button>
+<button id="downloadBtn" class="btn btn-success"><i class="fas fa-download"></i><span data-lang-zh="下载音频文件" data-lang-en="Download Audio File"></span></button>
 </div>
-<div class="loading" id="loadingIndicator">
-<span class="spinner"></span> 正在生成语音...
-</div>
+<div class="loading" id="loadingIndicator"><span class="spinner"></span> <span data-lang-zh="正在生成语音..." data-lang-en="Generating audio..."></span></div>
 <div id="statusMessage" class="status"></div>
 </div>
 <div class="card history-section">
 <div class="history-header">
-<h2 class="section-title"><i class="fas fa-history"></i>历史记录 <span class="badge">最近10条</span></h2>
-<button id="clearHistoryBtn" class="btn btn-sm btn-danger">
-<i class="fas fa-trash"></i>清空记录
-</button>
+<h2 class="section-title"><i class="fas fa-history"></i><span data-lang-zh="历史记录" data-lang-en="History"></span><span class="badge" data-lang-zh="最近10条" data-lang-en="Last 10"></span></h2>
+<button id="clearHistoryBtn" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i><span data-lang-zh="清空记录" data-lang-en="Clear History"></span></button>
 </div>
-<div class="history-warning">
-<i class="fas fa-exclamation-triangle"></i>
-生成记录链接刷新后重置，请注意下载
-</div>
-<div class="history-container" id="historyContainer">
-<div id="historyList">
-<p class="no-history">暂无历史记录</p>
-</div>
-</div>
-</div>
-<div class="features-card">
-<h3 class="features-title">语音特性</h3>
-<ul class="features-list">
-<li class="feature-item">
-<div class="feature-icon">
-<i class="fas fa-volume-high"></i>
-</div>
-<div class="feature-text">
-自然流畅的语音合成，接近真人发音
-</div>
-</li>
-<li class="feature-item">
-<div class="feature-icon">
-<i class="fas fa-users"></i>
-</div>
-<div class="feature-text">
-多种声音风格可选，满足不同场景需求
-</div>
-</li>
-<li class="feature-item">
-<div class="feature-icon">
-<i class="fas fa-align-left"></i>
-</div>
-<div class="feature-text">
-支持长文本转换，适合各种内容创作
-</div>
-</li>
-<li class="feature-item">
-<div class="feature-icon">
-<i class="fas fa-download"></i>
-</div>
-<div class="feature-text">
-一键下载MP3格式音频，可用于多平台分享
-</div>
-</li>
-<li class="feature-item">
-<div class="feature-icon">
-<i class="fas fa-history"></i>
-</div>
-<div class="feature-text">
-本地保存历史记录，方便重复使用和比较
-</div>
-</li>
-</ul>
+<div class="history-warning"><i class="fas fa-exclamation-triangle"></i><span data-lang-zh="生成记录链接刷新后重置，请注意下载" data-lang-en="History links reset on refresh. Please download your files."></span></div>
+<div class="history-container" id="historyContainer"><div id="historyList"><p class="no-history" data-lang-zh="暂无历史记录" data-lang-en="No history records"></p></div></div>
 </div>
 </section>
 </div>
 <footer>
-<p>© 2025 <a href="https://other.azad.asia" target="_blank" style="text-decoration: none; color: inherit;">Azad的实验室</a>  | 基于 Pollinations.AI | <i class="fas fa-sparkles"></i><a href="https://home.azad.asia/dashang" target="_blank" style="text-decoration: none; color: inherit;">请站长喝咖啡</a>  </p>
+<p>© 2025 <a href="https://other.azad.asia" target="_blank" style="text-decoration: none; color: inherit;">Azad的实验室</a> | 基于 Pollinations.AI | <i class="fas fa-sparkles"></i><a href="https://home.azad.asia/dashang" target="_blank" style="text-decoration: none; color: inherit;" data-lang-zh="请站长喝咖啡" data-lang-en="Buy me a coffee"></a></p>
 </footer>
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 const textInput = document.getElementById('textInput');
-const voiceSelect = document.getElementById('voiceSelect');
 const generateBtn = document.getElementById('generateBtn');
+const generateBtnContent = document.getElementById('generateBtnContent');
 const generateBtnText = document.getElementById('generateBtnText');
 const generateBtnSpinner = document.getElementById('generateBtnSpinner');
 const downloadBtn = document.getElementById('downloadBtn');
@@ -1196,323 +658,277 @@ const currentVoiceContainer = document.getElementById('currentVoiceContainer');
 const currentVoiceIcon = document.getElementById('currentVoiceIcon');
 const currentVoiceName = document.getElementById('currentVoiceName');
 const currentVoiceDesc = document.getElementById('currentVoiceDesc');
-const MAX_HISTORY_ITEMS = 10; // Limit history to 10 items
-const CHARS_PER_MINUTE = 150; // Estimated speaking speed
+const langZhOption = document.getElementById('lang-zh');
+const langEnOption = document.getElementById('lang-en');
+const apiTokenToggle = document.getElementById('api-token-toggle');
+const apiTokenContainer = document.getElementById('api-token-container');
+const apiTokenInput = document.getElementById('api-token-input');
+const saveTokenBtn = document.getElementById('save-token-btn');
+const MAX_HISTORY_ITEMS = 10;
+const CHARS_PER_MINUTE = 150;
 const voiceDescriptions = {
-    'alloy': '平衡中性',
-    'echo': '深沉有力',
-    'fable': '温暖讲述',
-    'onyx': '威严庄重',
-    'nova': '友好专业',
-    'shimmer': '轻快明亮',
-    'coral': '温柔平静',
-    'verse': '生动诗意',
-    'ballad': '抒情柔和',
-    'ash': '思考沉稳',
-    'sage': '智慧老练',
-    'amuch': '饱满自然',
-    'aster': '清晰直接',
-    'brook': '流畅舒适',
-    'clover': '活泼年轻',
-    'dan': '男声稳重',
-    'elan': '优雅流利',
-    'marilyn': '柔美圆润',
-    'meadow': '平和自然'
+    'alloy': { zh: '平衡中性', en: 'Balanced' }, 'echo': { zh: '深沉有力', en: 'Deep' }, 'fable': { zh: '温暖讲述', en: 'Narrative' },
+    'onyx': { zh: '威严庄重', en: 'Authoritative' }, 'nova': { zh: '友好专业', en: 'Friendly' }, 'shimmer': { zh: '轻快明亮', en: 'Bright' },
+    'coral': { zh: '温柔平静', en: 'Gentle' }, 'verse': { zh: '生动诗意', en: 'Lively' }, 'ballad': { zh: '抒情柔和', en: 'Melodious' },
+    'ash': { zh: '思考沉稳', en: 'Thoughtful' }, 'sage': { zh: '智慧老练', en: 'Wise' }, 'amuch': { zh: '饱满自然', en: 'Full-bodied' },
+    'dan': { zh: '男声稳重', en: 'Steady Male' }, 'hypnosis-tracy': { zh: '催眠疗愈', en: 'Hypnotic' },
 };
 const voiceColors = {
-    'alloy': '#4F46E5',
-    'echo': '#6366F1',
-    'fable': '#8B5CF6',
-    'onyx': '#333333',
-    'nova': '#10B981',
-    'shimmer': '#60A5FA',
-    'coral': '#F87171',
-    'verse': '#FBBF24',
-    'ballad': '#A78BFA',
-    'ash': '#4B5563',
-    'sage': '#059669',
-    'amuch': '#F59E0B',
-    'aster': '#2563EB',
-    'brook': '#3B82F6',
-    'clover': '#EC4899',
-    'dan': '#1F2937',
-    'elan': '#7C3AED',
-    'marilyn': '#DB2777',
-    'meadow': '#34D399'
+    'alloy': '#4F46E5', 'echo': '#6366F1', 'fable': '#8B5CF6', 'onyx': '#333333', 'nova': '#10B981', 'shimmer': '#60A5FA',
+    'coral': '#F87171', 'verse': '#FBBF24', 'ballad': '#A78BFA', 'ash': '#4B5563', 'sage': '#059669', 'amuch': '#F59E0B',
+    'dan': '#1F2937', 'hypnosis-tracy': '#a855f7'
 };
 let audioBlob = null;
 let history = [];
-// 同步单选按钮和下拉选择
-const voiceStyleOptions = document.querySelectorAll('.voice-style-option input[type="radio"]');
-voiceStyleOptions.forEach(option => {
-    option.addEventListener('change', function() {
-        if(this.checked) {
-            voiceSelect.value = this.value;
-        }
+function setLanguage(lang, isInitial = false) {
+    const targetLang = lang === 'en' ? 'en' : 'zh';
+    document.documentElement.lang = targetLang === 'en' ? 'en' : 'zh-CN';
+    if (!isInitial) {
+        localStorage.setItem('preferredLanguage', document.documentElement.lang);
+    }
+    
+    langEnOption.classList.toggle('active', targetLang === 'en');
+    langZhOption.classList.toggle('active', targetLang === 'zh');
+    document.querySelectorAll('[data-lang-zh], [data-lang-en]').forEach(el => {
+        const text = el.getAttribute(`data-lang-${targetLang}`);
+        if(text) el.textContent = text;
     });
-});
-// Load history from localStorage
-loadHistory();
-// Update character count and duration estimate as user types
-textInput.addEventListener('input', updateTextStats);
+    document.querySelectorAll('[data-lang-placeholder-zh], [data-lang-placeholder-en]').forEach(el => {
+        const placeholder = el.getAttribute(`data-lang-placeholder-${targetLang}`);
+        if(placeholder) el.setAttribute('placeholder', placeholder);
+    });
+    updateTextStats();
+    updateHistoryUI();
+}
 function updateTextStats() {
     const text = textInput.value.trim();
     const count = text.length;
-    // Update character count
-    charCount.textContent = `字符数: ${count}`;
-    // Calculate and update duration estimate
-    const durationMinutes = count / CHARS_PER_MINUTE;
-    let durationText;
-    if (durationMinutes < 1/60) {
-        durationText = '不到1秒';
-    } else if (durationMinutes < 1) {
-        const seconds = Math.round(durationMinutes * 60);
-        durationText = `${seconds} 秒`;
-    } else {
-        const minutes = Math.floor(durationMinutes);
-        const seconds = Math.round((durationMinutes - minutes) * 60);
-        if (seconds === 0) {
-            durationText = `${minutes} 分钟`;
-        } else {
-            durationText = `${minutes} 分钟 ${seconds} 秒`;
-        }
-    }
-    durationEstimate.textContent = `估计时长: ${durationText}`;
+    const lang = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
+    charCount.textContent = lang === 'en' ? `Characters: ${count}` : `字符数: ${count}`;
+    const durationSeconds = Math.max(0, Math.round((count / CHARS_PER_MINUTE) * 60));
+    durationEstimate.textContent = lang === 'en' ? `Est. Duration: ${durationSeconds} sec` : `估计时长: ${durationSeconds} 秒`;
 }
-// Function to update the current voice display
-function updateCurrentVoiceDisplay(voice) {
-    const voiceName = voice.charAt(0).toUpperCase() + voice.slice(1);
-    const voiceDesc = voiceDescriptions[voice] || '';
-    const voiceColor = voiceColors[voice] || '#4F46E5';
+// [Task 1] Refined button state management
+function setButtonState(state) {
+    const lang = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
+    if (state === 'loading') {
+        generateBtn.disabled = true;
+        generateBtnContent.style.display = 'none';
+        generateBtnText.textContent = lang === 'en' ? 'Generating...' : '正在生成...';
+        generateBtnSpinner.style.display = 'inline-block';
+    } else { // 'idle' state
+        generateBtn.disabled = false;
+        generateBtnContent.style.display = 'inline-flex';
+        generateBtnSpinner.style.display = 'none';
+        // Reset text from data attribute to respect language changes
+        generateBtnText.textContent = generateBtnText.getAttribute(`data-lang-${lang}`);
+    }
+}
+async function generateAudio() {
+    const text = textInput.value.trim();
+    const selectedOption = document.querySelector('.voice-style-option input[type="radio"]:checked');
+    const apiToken = localStorage.getItem('pollinationsApiToken');
+    const lang = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
+    if (!apiToken) {
+        showStatus(lang === 'en' ? 'API Token is not set. Please set your token first.' : 'API Token未设置，请先点击右上角的钥匙图标进行设置。', 'warning');
+        apiTokenContainer.style.display = 'block';
+        return;
+    }
+    if (!text) {
+        showStatus(lang === 'en' ? 'Please enter some text.' : '请输入文本内容', 'error');
+        return;
+    }
+    setButtonState('loading');
+    statusMessage.style.display = 'none';
+    loadingIndicator.style.display = 'flex';
+    try {
+        const model = selectedOption.value;
+        const voice = selectedOption.dataset.voice;
+        let url = `https://text.pollinations.ai/${encodeURIComponent(text)}?model=${model}&token=${apiToken}`;
+        if (voice) {
+            url += `&voice=${voice}`;
+        }
+        
+        const response = await fetch(url);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ error: `${response.status} ${response.statusText}` }));
+            throw new Error(errorData.error);
+        }
+        
+        audioBlob = await response.blob();
+        if (audioBlob.type !== 'audio/mpeg') {
+            throw new Error(lang === 'en' ? 'Invalid audio file received.' : '收到无效的音频文件。');
+        }
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audioElement = document.createElement('audio');
+        audioElement.id = 'audioElement';
+        audioElement.controls = true;
+        audioElement.autoplay = true;
+        audioElement.src = audioUrl;
+        
+        audioContainer.innerHTML = '';
+        audioContainer.appendChild(audioElement);
+        noAudioMessage.style.display = 'none';
+        downloadContainer.style.display = 'block';
+        updateCurrentVoiceDisplay(voice || model);
+        addHistoryItem(text, voice || model, audioBlob);
+        showStatus(lang === 'en' ? 'Audio generated successfully!' : '语音生成成功！', 'success');
+        
+    } catch (error) {
+        console.error('Error generating audio:', error);
+        showStatus(`${lang === 'en' ? 'Error: ' : '错误: '}${error.message}`, 'error');
+    } finally {
+        setButtonState('idle'); 
+        loadingIndicator.style.display = 'none';
+    }
+}
+function updateCurrentVoiceDisplay(voiceOrModel) {
+    const lang = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
+    const voiceName = voiceOrModel.charAt(0).toUpperCase() + voiceOrModel.slice(1).replace('-tracy', ' Tracy');
+    const voiceDesc = voiceDescriptions[voiceOrModel] ? (lang === 'en' ? voiceDescriptions[voiceOrModel].en : voiceDescriptions[voiceOrModel].zh) : '';
+    const voiceColor = voiceColors[voiceOrModel] || '#4F46E5';
     currentVoiceName.textContent = voiceName;
     currentVoiceDesc.textContent = voiceDesc;
     currentVoiceIcon.style.backgroundColor = voiceColor;
     currentVoiceContainer.style.display = 'flex';
 }
-// Function to generate audio from text
-async function generateAudio() {
-    const text = textInput.value.trim();
-    const selectedVoiceElement = document.querySelector('.voice-style-option input[type="radio"]:checked');
-    const voice = selectedVoiceElement ? selectedVoiceElement.value : voiceSelect.value;
-    if (!text) {
-        showStatus('请输入文本内容', 'error');
-        return;
-    }
-    // Show loading indicators
-    loadingIndicator.style.display = 'flex';
-    generateBtnText.textContent = "正在生成...";
-    generateBtnSpinner.style.display = 'inline-block';
-    generateBtn.disabled = true;
-    // Hide any previous status message
-    statusMessage.style.display = 'none';
-    try {
-        // Create the URL with the encoded text and selected voice
-        const url = `https://text.pollinations.ai/${encodeURIComponent(text)}?model=openai-audio&voice=${voice}`;
-        // Fetch the audio file
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
-        // Get the audio blob
-        audioBlob = await response.blob();
-        // Create a URL for the blob
-        const audioUrl = URL.createObjectURL(audioBlob);
-        // Create audio element
-        if (document.getElementById('audioElement')) {
-            document.getElementById('audioElement').remove();
-        }
-        const audioElement = document.createElement('audio');
-        audioElement.id = 'audioElement';
-        audioElement.controls = true;
-        audioElement.src = audioUrl;
-        audioElement.className = 'custom-audio';
-        // Create custom player container
-        const customPlayerDiv = document.createElement('div');
-        customPlayerDiv.className = 'custom-audio-player';
-        customPlayerDiv.appendChild(audioElement);
-        // Replace no audio message with audio element
-        if (noAudioMessage) {
-            noAudioMessage.style.display = 'none';
-        }
-        audioContainer.innerHTML = ''; // 清除预览容器
-        audioContainer.appendChild(customPlayerDiv);
-        // Show download button
-        downloadContainer.style.display = 'block';
-        // Update current voice display
-        updateCurrentVoiceDisplay(voice);
-        // Get preview text (first 20 characters)
-        const previewText = text.substring(0, 20) + (text.length > 20 ? '...' : '');
-        // Add to history
-        const timestamp = new Date();
-        const historyItem = {
-            id: Date.now(),
-            timestamp: timestamp,
-            voice: voice,
-            text: text,
-            previewText: previewText,
-            blob: audioBlob
-        };
-        // Add new item to the beginning and limit to 10 items
-        history.unshift(historyItem);
-        if (history.length > MAX_HISTORY_ITEMS) {
-            history = history.slice(0, MAX_HISTORY_ITEMS);
-        }
-        saveHistory();
-        updateHistoryUI(historyItem.id); // Pass the new item ID to highlight it
-        showStatus('语音生成成功！', 'success');
-        // Play the audio automatically
-        audioElement.play();
-    } catch (error) {
-        console.error('Error generating audio:', error);
-        showStatus(`生成语音时出错: ${error.message}`, 'error');
-    } finally {
-        // Hide loading indicators
-        loadingIndicator.style.display = 'none';
-        generateBtnText.textContent = "生成语音";
-        generateBtnSpinner.style.display = 'none';
-        generateBtn.disabled = false;
-    }
-}
-// Function to download the generated audio
 function downloadAudio(blob, filename) {
+    const lang = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
     if (!blob) {
-        showStatus('没有可下载的音频', 'error');
+        showStatus(lang === 'en' ? 'No audio to download.' : '没有可下载的音频', 'error');
         return;
     }
-    const downloadUrl = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = downloadUrl;
-    a.download = filename || `audio_${new Date().getTime()}.mp3`;
+    a.href = URL.createObjectURL(blob);
+    a.download = filename || `audio_${Date.now()}.mp3`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(downloadUrl);
+    URL.revokeObjectURL(a.href);
 }
-// Function to download history item
+function addHistoryItem(text, voice, blob) {
+    const previewText = text.substring(0, 30) + (text.length > 30 ? '...' : '');
+    const historyItem = { id: Date.now(), timestamp: new Date(), voice: voice, text: text, previewText: previewText, blob: blob };
+    history.unshift(historyItem);
+    if (history.length > MAX_HISTORY_ITEMS) history.pop();
+    saveHistory();
+    updateHistoryUI(historyItem.id);
+}
 function downloadHistoryItem(id) {
+    const lang = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
     const item = history.find(h => h.id === id);
-    if (item) {
+    if (item && item.blob) {
         const sanitizedText = item.previewText.replace(/[^\w\u4e00-\u9fa5]/g, '');
-        const fileName = `${item.voice}_${sanitizedText}.mp3`;
-        downloadAudio(item.blob, fileName);
+        downloadAudio(item.blob, `${item.voice}_${sanitizedText}.mp3`);
+    } else {
+        showStatus(lang === 'en' ? 'Cannot download, audio data is missing. Please regenerate.' : '无法下载，音频数据已丢失，请重新生成。', 'error');
     }
 }
-// Function to update the history UI
 function updateHistoryUI(newItemId) {
+    const lang = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
     if (history.length === 0) {
-        historyList.innerHTML = '<p class="no-history">暂无历史记录</p>';
+        historyList.innerHTML = `<p class="no-history">${lang === 'en' ? 'No history records' : '暂无历史记录'}</p>`;
         return;
     }
     historyList.innerHTML = '';
-    // Display only the 10 most recent items
     history.forEach(item => {
-        const historyItem = document.createElement('div');
-        historyItem.className = 'history-item';
-        if (item.id === newItemId) {
-            historyItem.classList.add('new');
-        }
-        // Format timestamp
-        const date = item.timestamp;
-        const formattedDate = `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-        historyItem.innerHTML = `
+        const historyItemEl = document.createElement('div');
+        historyItemEl.className = 'history-item' + (item.id === newItemId ? ' new' : '');
+        const date = new Date(item.timestamp);
+        const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+        historyItemEl.innerHTML = `
             <div class="history-info">
                 <div class="history-timestamp">${formattedDate}</div>
-                <div class="history-voice">${item.voice}</div>
+                <div class="history-voice" style="--gradient-primary: linear-gradient(135deg, ${voiceColors[item.voice] || '#4F46E5'}, ${voiceColors[item.voice] || '#7C3AED'}cc);">${item.voice}</div>
                 <div class="history-text">${item.previewText}</div>
             </div>
             <button class="btn btn-text history-download" data-id="${item.id}">
-                <i class="fas fa-download"></i> 下载
-            </button>
-        `;
-        historyList.appendChild(historyItem);
+                <i class="fas fa-download"></i> <span data-lang-zh="下载" data-lang-en="Download">${lang === 'en' ? 'Download' : '下载'}</span>
+            </button>`;
+        historyList.appendChild(historyItemEl);
     });
-    // Add event listeners to download buttons
-    document.querySelectorAll('.history-download').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const id = parseInt(btn.getAttribute('data-id'), 10);
-            downloadHistoryItem(id);
-        });
-    });
+    document.querySelectorAll('.history-download').forEach(btn => btn.addEventListener('click', e => downloadHistoryItem(parseInt(e.currentTarget.dataset.id))));
 }
-// Function to clear all history
 function clearHistory() {
-    if (confirm('确定要清空所有历史记录吗？这个操作不可撤销。')) {
+    const lang = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
+    const confirmMessage = lang === 'en' ? 'Are you sure you want to clear all history? This action cannot be undone.' : '确定要清空所有历史记录吗？这个操作不可撤销。';
+    if (confirm(confirmMessage)) {
         history = [];
         localStorage.removeItem('audioGeneratorHistory');
         updateHistoryUI();
-        showStatus('历史记录已清空', 'success');
+        showStatus(lang === 'en' ? 'History cleared.' : '历史记录已清空', 'success');
     }
 }
-// Function to save history to localStorage
 function saveHistory() {
-    // We can't store blobs in localStorage, so we'll store other info and keep blobs in memory
-    const historyData = history.map(item => ({
-        id: item.id,
-        timestamp: item.timestamp.toISOString(),
-        voice: item.voice,
-        text: item.text,
-        previewText: item.previewText
-    }));
-    try {
-        localStorage.setItem('audioGeneratorHistory', JSON.stringify(historyData));
-    } catch (e) {
-        console.error('Error saving history to localStorage:', e);
-    }
+    localStorage.setItem('audioGeneratorHistory', JSON.stringify(history.map(item => ({...item, blob: null }))));
 }
-// Function to load history from localStorage
 function loadHistory() {
-    try {
-        const historyData = localStorage.getItem('audioGeneratorHistory');
-        if (historyData) {
-            const parsedHistory = JSON.parse(historyData);
-            history = parsedHistory.map(item => ({
-                ...item,
-                timestamp: new Date(item.timestamp),
-                blob: null // We don't store blobs in localStorage
-            }));
-            // Limit to MAX_HISTORY_ITEMS
-            if (history.length > MAX_HISTORY_ITEMS) {
-                history = history.slice(0, MAX_HISTORY_ITEMS);
-            }
-            updateHistoryUI();
-        }
-    } catch (e) {
-        console.error('Error loading history from localStorage:', e);
+    const savedHistory = localStorage.getItem('audioGeneratorHistory');
+    if (savedHistory) {
+      try { 
+        history = JSON.parse(savedHistory).map(item => ({...item, timestamp: new Date(item.timestamp), blob: null }));
+      } catch (e) {
+        console.error("Could not parse history, resetting.", e);
+        localStorage.removeItem('audioGeneratorHistory');
+       }
     }
 }
-// Function to show status messages
 function showStatus(message, type) {
     statusMessage.textContent = message;
     statusMessage.className = `status ${type}`;
-    statusMessage.style.display = 'block';
-    // Hide status after 5 seconds
-    setTimeout(() => {
-        statusMessage.style.display = 'none';
-    }, 5000);
+    setTimeout(() => { statusMessage.className = 'status'; }, 6000);
 }
-// Event listeners
+// --- Event Listeners ---
+apiTokenToggle.addEventListener('click', () => {
+    apiTokenContainer.style.display = apiTokenContainer.style.display === 'block' ? 'none' : 'block';
+});
+saveTokenBtn.addEventListener('click', () => {
+    const lang = document.documentElement.lang.startsWith('zh') ? 'zh' : 'en';
+    const token = apiTokenInput.value.trim();
+    if (token) {
+        localStorage.setItem('pollinationsApiToken', token);
+        showStatus(lang === 'en' ? 'API Token saved successfully!' : 'API Token 保存成功！', 'success');
+        apiTokenContainer.style.display = 'none';
+        apiTokenToggle.classList.add('active');
+        apiTokenInput.value = ''; 
+    } else {
+        localStorage.removeItem('pollinationsApiToken');
+        showStatus(lang === 'en' ? 'API Token removed.' : 'API Token 已移除。', 'warning');
+        apiTokenToggle.classList.remove('active');
+    }
+});
 generateBtn.addEventListener('click', generateAudio);
 downloadBtn.addEventListener('click', () => {
     if (audioBlob) {
-        const text = textInput.value.trim();
-        const selectedVoiceElement = document.querySelector('.voice-style-option input[type="radio"]:checked');
-        const voice = selectedVoiceElement ? selectedVoiceElement.value : voiceSelect.value;
-        const previewText = text.substring(0, 20).replace(/[^\w\u4e00-\u9fa5]/g, '');
-        const fileName = `${voice}_${previewText}.mp3`;
-        downloadAudio(audioBlob, fileName);
+        const selectedOption = document.querySelector('.voice-style-option input[type="radio"]:checked');
+        const voice = selectedOption.dataset.voice || selectedOption.value;
+        const text = textInput.value.trim().substring(0, 20).replace(/[^\w\u4e00-\u9fa5]/g, '');
+        downloadAudio(audioBlob, `${voice}_${text}.mp3`);
     }
 });
-// Add keyboard shortcut (Ctrl+Enter) to generate audio
-textInput.addEventListener('keydown', function(e) {
+textInput.addEventListener('keydown', e => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         e.preventDefault();
         generateAudio();
     }
 });
-// Clear history button
+textInput.addEventListener('input', updateTextStats);
 clearHistoryBtn.addEventListener('click', clearHistory);
-// Initialize text stats
-updateTextStats();
+langZhOption.addEventListener('click', () => setLanguage('zh'));
+langEnOption.addEventListener('click', () => setLanguage('en'));
+(function init() {
+    loadHistory();
+    const preferredLanguage = localStorage.getItem('preferredLanguage') || 'zh-CN';
+    setLanguage(preferredLanguage, true); // Pass true to avoid saving
+    
+    const savedToken = localStorage.getItem('pollinationsApiToken');
+    if (savedToken) {
+        apiTokenToggle.classList.add('active');
+    }
+    updateTextStats();
+    updateHistoryUI();
+})();
 });
-</script></body>
+</script>
+</body>
 </html>
