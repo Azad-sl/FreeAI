@@ -42,7 +42,6 @@ body {
 body::-webkit-scrollbar {
     display: none;
 }
-        /* 星空背景 */
         .stars-container {
             position: fixed;
             top: 0;
@@ -65,7 +64,6 @@ body::-webkit-scrollbar {
             0%, 100% { opacity: 0; transform: scale(0.5); }
             50% { opacity: var(--opacity); transform: scale(1); }
         }
-        /* 流星效果 */
         .shooting-star {
             position: absolute;
             width: 150px;
@@ -82,7 +80,6 @@ body::-webkit-scrollbar {
             30% { opacity: 0; transform: translateX(-200px) }
             100% { opacity: 0; transform: translateX(-200px) }
         }
-        /* 星云效果 */
         .nebula {
             position: fixed;
             border-radius: 50%;
@@ -95,7 +92,6 @@ body::-webkit-scrollbar {
             0% { transform: translate(0, 0) rotate(0deg); }
             100% { transform: translate(50px, 50px) rotate(10deg); }
         }
-        /* 行星轨道 */
         .orbit {
             position: fixed;
             border-radius: 50%;
@@ -526,7 +522,7 @@ body::-webkit-scrollbar {
                 transform: translateX(100%);
             }
         }
-        .digital-clock-container { /* 新增容器，用于时钟和开关的布局 */
+        .digital-clock-container { 
             position: absolute;
             top: 20px;
             right: 20px;
@@ -600,7 +596,7 @@ body::-webkit-scrollbar {
             .container {
                 padding: 1rem;
             }
-            .digital-clock-container { /* 响应式调整 */
+            .digital-clock-container { 
                 position: relative;
                 top: auto;
                 right: auto;
@@ -692,10 +688,8 @@ body::-webkit-scrollbar {
     <div class="glitch"><span></span> <span></span> <span></span></div>
 
     <div class="container">
-        <!-- 修改：将时钟和切换器包裹在一个容器里，方便布局 -->
         <div class="digital-clock-container">
             <div class="digital-clock" id="clock">00:00:00</div>
-            <!-- ✨ 新增：语言切换开关HTML结构 -->
             <label class="language-switch">
                 <input type="checkbox" id="language-toggle">
                 <span class="slider"></span>
@@ -704,7 +698,6 @@ body::-webkit-scrollbar {
         
         <header>
             <h1>Free AI</h1>
-            <!-- 修改：添加 data-translate-key -->
             <p class="subtitle" data-translate-key="subtitle">探索未来 · 释放创造力</p>
         </header>
 
@@ -712,7 +705,6 @@ body::-webkit-scrollbar {
             <div class="card">
                 <div class="card-content">
                     <span class="card-icon">💬</span>
-                    <!-- 修改：添加 data-translate-key -->
                     <h2 data-translate-key="card1_title">AI智能对话</h2>
                     <p data-translate-key="card1_desc">强大的AI聊天助手，可以回答问题、提供创意建议、编写文本，甚至帮你解决复杂问题。完全免费，无限制使用。</p>
                     <a href="https://freeai.aihub.ren/chat" class="btn" data-translate-key="card1_btn">开始对话</a>
@@ -722,7 +714,6 @@ body::-webkit-scrollbar {
             <div class="card">
                 <div class="card-content">
                     <span class="card-icon">🎨</span>
-                    <!-- 修改：添加 data-translate-key -->
                     <h2 data-translate-key="card2_title">AI图像生成</h2>
                     <p data-translate-key="card2_desc">将你的想法转化为视觉艺术。只需输入文本描述，AI将为你创造令人惊叹的图像。支持多种风格和高分辨率导出。</p>
                     <a href="https://freeai.aihub.ren/draw" class="btn" data-translate-key="card2_btn">生成图像</a>
@@ -732,7 +723,6 @@ body::-webkit-scrollbar {
             <div class="card">
                 <div class="card-content">
                     <span class="card-icon">🔊</span>
-                    <!-- 修改：添加 data-translate-key -->
                     <h2 data-translate-key="card3_title">AI语音合成</h2>
                     <p data-translate-key="card3_desc">将文本转换为逼真的语音。支持多种语言和声音风格，适用于创作内容、教育材料或个人使用。</p>
                     <a href="https://freeai.aihub.ren/tts" class="btn" data-translate-key="card3_btn">转换语音</a>
@@ -741,12 +731,10 @@ body::-webkit-scrollbar {
             </div>
         </div>
         <footer>
-            <!-- 修改：添加 data-translate-key -->
             <p data-translate-key="footer_text">© 2025 <a href="https://github.com/Azad-sl/FreeAI" target="_blank" style="text-decoration: none; color: inherit;"><i class="fab fa-github" style="color: var(--neon-blue);"></i>   Free AI</a> | 基于 Pollinations.AI | <a href="https://other.azad.asia" target="_blank" style="text-decoration: none; color: inherit;">Azad的实验室</a></p>
         </footer>
     </div>
     <script>
-        // --- ✨ 新增：多语言文本数据仓库 ---
         const translations = {
             'zh-CN': {
                 title: 'FreeAI - 基于 Pollinations.AI',
@@ -778,7 +766,6 @@ body::-webkit-scrollbar {
             }
         };
 
-        // --- ✨ 新增：语言切换核心函数 ---
         function switchLanguage(lang) {
             document.documentElement.lang = lang;
             document.title = translations[lang]['title'];
@@ -786,15 +773,12 @@ body::-webkit-scrollbar {
             document.querySelectorAll('[data-translate-key]').forEach(el => {
                 const key = el.dataset.translateKey;
                 if (translations[lang][key]) {
-                    // 使用innerHTML以支持footer中的链接
                     el.innerHTML = translations[lang][key];
                 }
             });
-            // 保存用户选择到本地
             localStorage.setItem('userLanguage', lang);
         }
         
-        // 创建星空背景
         function createStars() {
             const starsContainer = document.getElementById('stars-container');
             const starCount = window.innerWidth < 768 ? 100 : 200;
@@ -934,19 +918,15 @@ body::-webkit-scrollbar {
             updateClock();
             setTimeout(randomGlitch, 2000);
 
-            // --- ✨ 新增：语言切换初始化和事件监听 ---
             const languageToggle = document.getElementById('language-toggle');
             
-            // 1. 检查本地存储，决定初始语言
             const savedLang = localStorage.getItem('userLanguage') || 'zh-CN';
             
-            // 2. 设置页面初始状态
             switchLanguage(savedLang);
             if (savedLang === 'en') {
                 languageToggle.checked = true;
             }
 
-            // 3. 监听开关点击事件
             languageToggle.addEventListener('change', () => {
                 if (languageToggle.checked) {
                     switchLanguage('en');
@@ -954,10 +934,10 @@ body::-webkit-scrollbar {
                     switchLanguage('zh-CN');
                 }
             });
-            // --- 初始化结束 ---
         });
     </script>
 </body>
 </html>
+
 
 
