@@ -7,6 +7,7 @@
 FreeAI - A powerful AI platform powered by [Pollinations.AI](https://pollinations.ai/), offering **free, no-registration, unlimited** AI chat, image generation, and TTS services.
 
 ## 🏷 更新日志
+2025.08.09： 1.2 版本 修复API验证与Prompt构建核心逻辑错误。修复XSS漏洞并优化状态管理。优化CSS结构。
 2025.08.08： 1.1 版本 适配官方最新模型，确保服务稳定。增加官方API Token填充功能，解锁高级模型。新增中/英文语言一键切换功能。多项UI细节优化，提升视觉和交互体验。
 
 ### [➡️ Live Demo](https://freeai.aihub.ren/)
